@@ -4,7 +4,7 @@
     background: white;
     color: rgb(0, 0, 0);
     border-radius: 0px;
-    padding: 200px 40px;
+    padding: 50px 40px;
     margin: 0;
     position: fixed; /* Cambiado a fixed para ocupar siempre la mitad izquierda */
     left: 0;
@@ -12,67 +12,107 @@
     bottom: 0;
 }
 
-
-
 .wrapper h1 {
-    font-size: 20px;
+    font-family: 'Cormorant Garamond', serif; /* Puedes reemplazar 'Cormorant Garamond' con cualquier otra fuente de la lista */
+    font-size: 50px;
     text-align: center;
 }
+.wrapper h2 {
+    font-family: 'Liberation Serif', serif; /* Puedes reemplazar 'Liberation Serif' con cualquier otra fuente de la lista */
+    font-size: 25px;
+    text-align: center;
+    margin-top: 50px; /* Ajusta este valor según sea necesario para mover el texto más abajo */
+}
+
+
 .wrapper .input-box {
     position: relative;
     width: 100%;
     height: 50px;
-    margin: 30px 0;
+    margin: 80px 0;
+}
+
+.input-box label {
+    font-size: 16px;
+    font-family: 'Times New Roman', serif;
+
+    color: #333; /* Color del texto */
+    margin-bottom: 7px; /* Espacio entre el label y el input */
+    display: block; /* Hace que cada label se muestre en una línea separada */
+    margin-left:110px ;
+
 }
 
 .input-box input {
-    width: 100%;
+    width: calc(80% - 100px); /* Reducir el ancho del input */
     height: 100%;
-    background: rgb(31, 30, 30);
+    background: rgb(54, 54, 54);
     border: none;
     outline: none;
     border: 2px solid rgba(121, 121, 121, 0.2);
     border-radius: 10px;
     font-size: 16px;
     color: rgb(255, 255, 255);
-    padding: 20px 45px 20px 20px;
-
+    padding: 40px 45px 20px 20px;
+    margin-left:110px ;
 }
-.input-box input::placeholder{
+
+
+.input-box input::placeholder {
     color: rgb(3, 3, 3);
 }
 
- .icon{
+.icon {
     position: absolute;
-    color: rgb(255, 255, 255);
-    right: 20px;
-    top: 90%;
-    transform: translateY(-50%);
-    font-size: 16px;
+    color: rgb(255, 253, 253);
+    right: 160px;
+    top: 100%;
+    transform: translateY(-30%);
+    font-size: 40px;
+}
+.icon1 {
+    margin-right: 10px; /* Ajusta el margen a la derecha para mover el icono hacia la izquierda */
+}
 
- }
-.wrapper .remember-forgot{
+.remember-forgot label {
+    font-family: 'Times New Roman', serif;
+
+    display: flex; /* Hace que el contenido del label se comporte como un flexbox */
+    align-items: center; /* Centra verticalmente los elementos dentro del label */
+    font-size: 14.5px;
+    margin: -3px 0 20px;
+}
+
+.wrapper .remember-forgot {
+    
     display: flex;
     justify-content: space-between;
     font-size: 14.5px;
-    margin: -1px 0 20px;
-    
+    margin: -2px 0 20px;
 }
-.remember-forgot label input{
-    background-color: rgb(170, 37, 37);
-    margin-right: 10px;
 
+.remember-forgot label input {
+    
+    width: 240px;
+    height: 20px;
+    accent-color: #7c121f; /* Cambia el color del checkbox */
+    margin-right: -90px;
 }
-.remember-forgot a{
+
+.remember-forgot a {
     color: rgb(1, 2, 2);
     text-decoration: none;
 }
-.remember-forgot a:hover{
+
+.remember-forgot a:hover {
     text-decoration: underline;
 }
+
 .wrapper button {
+    font-family: 'Times New Roman', serif;
+
     width: 60%;
-    height: 40px;
+    height: 60px;
     background: #7c121f;
     border: none;
     outline: none;
@@ -82,38 +122,61 @@
     font-size: 16px;
     color: #fffdfd;
     font-weight: 700;
-    margin-left: 100px; /* Mueve el botón lo más a la derecha posible */
+    margin-left: 135px; /* Mueve el botón lo más a la derecha posible */
     display: block; /* Asegura que el botón se comporte como un bloque */
 }
 
-.wrapper .register-link{
-    font-size: 14.5px;
-    text-align: center;
-    margin: 20px 0 15px;
+.wrapper .register-link {
+    font-family: 'Open Sans', sans-serif; /* Puedes reemplazar 'Open Sans' con cualquier otra fuente de la lista */
 
+    font-size: 22px;
+    text-align: center;
+    margin: 60px 0 15px;
 }
+
 .register-link p a {
-    color: azure;
+    color: rgb(9, 10, 10);
     text-decoration: none;
     font-weight: 600;
-
 }
-.register-link p a:hover{
+
+.register-link p a:hover {
     text-decoration: underline;
 }
+
 .image-wrapper {
     width: 50%; /* Utiliza el 50% del ancho total de la pantalla */
-    max-width: calc(50vw - 20px); /* Limita el ancho máximo para mantener el diseño */
-    position: fixed; /* Cambiado a fixed para ocupar siempre la mitad derecha */
+    max-width: calc(50vw - 10px); /* Incrementa el ancho máximo del contenedor */
+    position: fixed; /* Mantiene el contenedor fijo en la mitad derecha */
     right: 0;
-    top: 0;
+    top: 20%;
     bottom: 0;
     display: flex;
     justify-content: center; /* Centra la imagen horizontalmente */
+    align-items: center; /* Alinea la imagen hacia el inicio (parte superior) del contenedor */
+    padding-top: 50px; /* Añade espacio en la parte superior para mover la imagen hacia abajo */
+    padding: 20px; /* Añade un poco de padding alrededor del contenedor */
+}
+
+.image-wrapper img {
+    width: 60%; /* Incrementa el ancho de la imagen */
+    height: auto; /* Mantiene la proporción de la imagen */
+    max-width: 100%; /* Asegura que la imagen no exceda el tamaño del contenedor */
+    max-height: 100%; /* Asegura que la imagen no exceda el tamaño del contenedor */
+    object-fit: contain; /* Ajusta la imagen para que se ajuste dentro del contenedor */
+}
+.image-wrapper1 {
+    width: 50%; /* Utiliza el 50% del ancho total de la pantalla */
+    max-width: calc(50vw - 50px); /* Limita el ancho máximo para mantener el diseño */
+    position: fixed; /* Cambiado a fixed para ocupar siempre la mitad derecha */
+    right: 0;
+    top: 30px; /* Ajusta la posición verticalmente */
+    display: flex;
+    justify-content: center; /* Centra la imagen horizontalmente */
     align-items: center; /* Centra la imagen verticalmente */
-  }
-  
-  .image-wrapper img {
-    max-width: 100%;
-    max-height: 100%;
-  }
+}
+
+.image-wrapper1 img {
+    max-width: 60%; /* Ajusta el tamaño máximo de la imagen */
+    max-height: 50%; /* Ajusta el tamaño máximo de la imagen */
+}
