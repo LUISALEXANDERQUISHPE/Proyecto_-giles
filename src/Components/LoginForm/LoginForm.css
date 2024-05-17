@@ -94,8 +94,7 @@
 .remember-forgot label input {
     
     width: 240px;
-    height: 20px;
-    accent-color: #7c121f; /* Cambia el color del checkbox */
+    height: 20px;   accent-color: #7c121f; /* Cambia el color del checkbox */
     margin-right: -90px;
 }
 
