@@ -1,0 +1,119 @@
+.wrapper {
+    width: 50%; /* Utiliza el 50% del ancho total de la pantalla */
+    max-width: calc(50vw - 20px); /* Limita el ancho máximo para mantener el diseño */
+    background: white;
+    color: rgb(0, 0, 0);
+    border-radius: 0px;
+    padding: 200px 40px;
+    margin: 0;
+    position: fixed; /* Cambiado a fixed para ocupar siempre la mitad izquierda */
+    left: 0;
+    top: 0;
+    bottom: 0;
+}
+
+
+
+.wrapper h1 {
+    font-size: 20px;
+    text-align: center;
+}
+.wrapper .input-box {
+    position: relative;
+    width: 100%;
+    height: 50px;
+    margin: 30px 0;
+}
+
+.input-box input {
+    width: 100%;
+    height: 100%;
+    background: rgb(31, 30, 30);
+    border: none;
+    outline: none;
+    border: 2px solid rgba(121, 121, 121, 0.2);
+    border-radius: 10px;
+    font-size: 16px;
+    color: rgb(255, 255, 255);
+    padding: 20px 45px 20px 20px;
+
+}
+.input-box input::placeholder{
+    color: rgb(3, 3, 3);
+}
+
+ .icon{
+    position: absolute;
+    color: rgb(255, 255, 255);
+    right: 20px;
+    top: 90%;
+    transform: translateY(-50%);
+    font-size: 16px;
+
+ }
+.wrapper .remember-forgot{
+    display: flex;
+    justify-content: space-between;
+    font-size: 14.5px;
+    margin: -1px 0 20px;
+    
+}
+.remember-forgot label input{
+    background-color: rgb(170, 37, 37);
+    margin-right: 10px;
+
+}
+.remember-forgot a{
+    color: rgb(1, 2, 2);
+    text-decoration: none;
+}
+.remember-forgot a:hover{
+    text-decoration: underline;
+}
+.wrapper button {
+    width: 60%;
+    height: 40px;
+    background: #7c121f;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+    cursor: pointer;
+    font-size: 16px;
+    color: #fffdfd;
+    font-weight: 700;
+    margin-left: 100px; /* Mueve el botón lo más a la derecha posible */
+    display: block; /* Asegura que el botón se comporte como un bloque */
+}
+
+.wrapper .register-link{
+    font-size: 14.5px;
+    text-align: center;
+    margin: 20px 0 15px;
+
+}
+.register-link p a {
+    color: azure;
+    text-decoration: none;
+    font-weight: 600;
+
+}
+.register-link p a:hover{
+    text-decoration: underline;
+}
+.image-wrapper {
+    width: 50%; /* Utiliza el 50% del ancho total de la pantalla */
+    max-width: calc(50vw - 20px); /* Limita el ancho máximo para mantener el diseño */
+    position: fixed; /* Cambiado a fixed para ocupar siempre la mitad derecha */
+    right: 0;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center; /* Centra la imagen horizontalmente */
+    align-items: center; /* Centra la imagen verticalmente */
+  }
+  
+  .image-wrapper img {
+    max-width: 100%;
+    max-height: 100%;
+  }
