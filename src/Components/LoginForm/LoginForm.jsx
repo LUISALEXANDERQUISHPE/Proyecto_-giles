@@ -2,10 +2,9 @@ import React from 'react';
 import './LoginForm.css';
 import { FaEyeSlash } from "react-icons/fa";
 import { RiVipCrownFill } from "react-icons/ri";
-
 import images from '../Assets/img/images';
 
-const LoginForm = () => {
+const LoginForm = ({ toggleForm }) => {
     return (
         <div className='container'>
             <div className='login-wrapper'>
@@ -27,9 +26,10 @@ const LoginForm = () => {
                         </div>
                         <button type='submit'>INICIAR SESION</button>
                         <div className='register-link'>
-
-                            <p>                         <RiVipCrownFill className='icon1' />
-                                FISEI  <a href='#'>   |    REGISTRARSE</a></p>
+                            <p>
+                                <RiVipCrownFill className='icon1' />
+                                FISEI <a href='#' onClick={toggleForm}>   |    REGISTRARSE</a>
+                            </p>
                         </div>
                     </form>
                 </div>
@@ -40,7 +40,6 @@ const LoginForm = () => {
             <div className="image-wrapper1">
                 <img src={images.img2} alt="Descripción de la imagen" />
             </div>
-
         </div>
     );
 };
