@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../Register/registerForm.css'; // Ajusta la ruta según la ubicación real
+import { FaEyeSlash, FaEye } from "react-icons/fa";
 import { RiVipCrownFill } from "react-icons/ri";
 import images from '../Assets/img/images';
 
@@ -9,6 +10,8 @@ const RegistrationForm = ({ toggleForm }) => {
     const [correoElectronico, setCorreoElectronico] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const handlePasswordChange = (e) => {
         setPassword(e.target.value);
@@ -47,6 +50,14 @@ const RegistrationForm = ({ toggleForm }) => {
         if (!correoElectronico.endsWith('@uta.edu.ec')) {
             alert('El correo debe terminar en @uta.edu.ec');
         }
+    };
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
+
+    const toggleConfirmPasswordVisibility = () => {
+        setShowConfirmPassword(!showConfirmPassword);
     };
 
     const handleSubmit = async (e) => {
@@ -114,11 +125,21 @@ const RegistrationForm = ({ toggleForm }) => {
                         </div>
                         <div className="registration-input-box">
                             <label htmlFor="password">CONTRASEÑA</label>
-                            <input type='password' id="password" name="contrasena" required value={password} onChange={handlePasswordChange} />
+                            <input type={showPassword ? 'text' : 'password'} id="password" name="contrasena" required value={password} onChange={handlePasswordChange} />
+                            {showPassword ? (
+                                <FaEye className='registration-icon' onClick={togglePasswordVisibility} />
+                            ) : (
+                                <FaEyeSlash className='registration-icon' onClick={togglePasswordVisibility} />
+                            )}
                         </div>
                         <div className="registration-input-box">
                             <label htmlFor="confirmPassword">REPETIR CONTRASEÑA</label>
-                            <input type='password' id="confirmPassword" required value={confirmPassword} onChange={handleConfirmPasswordChange} />
+                            <input type={showConfirmPassword ? 'text' : 'password'} id="confirmPassword" required value={confirmPassword} onChange={handleConfirmPasswordChange} />
+                            {showConfirmPassword ? (
+                                <FaEye className='registration-icon' onClick={toggleConfirmPasswordVisibility} />
+                            ) : (
+                                <FaEyeSlash className='registration-icon' onClick={toggleConfirmPasswordVisibility} />
+                            )}
                         </div>
                         <button type='submit' className='registration-button'>REGISTRARSE</button>
                         <div className='registration-register-link'>
