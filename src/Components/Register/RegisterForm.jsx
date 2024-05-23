@@ -6,12 +6,14 @@ import images from '../Assets/img/images';
 
 const RegistrationForm = ({ toggleForm }) => {
     const [nombre, setNombre] = useState('');
-    const [apellidos, setApellidos] = useState('');
+    const [apellido, setApellido] = useState('');
     const [correoElectronico, setCorreoElectronico] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const handlePasswordChange = (e) => {
         setPassword(e.target.value);
@@ -31,13 +33,13 @@ const RegistrationForm = ({ toggleForm }) => {
         }
     };
 
-    const handleApellidosChange = (e) => {
+    const handleApellidoChange = (e) => {
         const value = e.target.value;
         const regex = /^[a-zA-Z\s]*$/; // Solo permite letras y espacios en blanco
         if (regex.test(value)) {
-            setApellidos(value);
+            setApellido(value);
         } else {
-            alert('Los apellidos solo pueden contener letras y espacios');
+            alert('El apellido solo puede contener letras y espacios');
         }
     };
 
@@ -60,40 +62,41 @@ const RegistrationForm = ({ toggleForm }) => {
         setShowConfirmPassword(!showConfirmPassword);
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault(); // Evitar que el formulario se envíe automáticamente
-
-        if (password !== confirmPassword) {
-            alert('Las contraseñas no coinciden');
-            return;
-        }
-
-        // Enviar el formulario
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+    
         try {
-            const response = await fetch("http://localhost:80/Agiles/mi-app/src/Components/Register/register.php", {
-                method: "POST",
-                body: new FormData(e.target) // Envía los datos del formulario
+            const response = await fetch('/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    nombre,
+                    apellido,
+                    correo_electronico: correoElectronico,
+                    contrasenia: password
+                }),
             });
-
-            if (response.ok) {
-                const data = await response.json();
-                if (data.success) {
-                    alert('¡Registro exitoso!');
-                    // Restablecer el estado del formulario
-                    setNombre('');
-                    setApellidos('');
-                    setCorreoElectronico('');
-                    setPassword('');
-                    setConfirmPassword('');
-                } else {
-                    alert(data.message || 'Hubo un problema al registrar usuario');
-                }
-            } else {
-                throw new Error('Hubo un problema al comunicarse con el servidor');
+    
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
             }
+    
+            const data = await response.json();
+            setSuccessMessage(data.message);
+            setErrorMessage('');
+            // Limpiar los campos del formulario si es necesario
+            setNombre('');
+            setApellido('');
+            setCorreoElectronico('');
+            setPassword('');
+            setConfirmPassword('');
         } catch (error) {
-            console.error("Error al enviar el formulario:", error);
-            alert("Hubo un problema al enviar el formulario");
+            console.error('Error al enviar el formulario:', error);
+            setErrorMessage(error.message);
+            setSuccessMessage('');
         }
     };
 
@@ -111,13 +114,15 @@ const RegistrationForm = ({ toggleForm }) => {
                         </div>
 
                         <h1>Registrarse</h1>
+                        {successMessage && <p className="success-message">{successMessage}</p>}
+                        {errorMessage && <p className="error-message">{errorMessage}</p>}
                         <div className="registration-input-box">
-                            <label htmlFor="firstName">NOMBRE</label>
+                            <label htmlFor="firstName">NOMBRES</label>
                             <input type='text' id="firstName" name="nombre" required value={nombre} onChange={handleNombreChange} />
                         </div>
                         <div className="registration-input-box">
                             <label htmlFor="lastName">APELLIDOS</label>
-                            <input type='text' id="lastName" name="apellidos" required value={apellidos} onChange={handleApellidosChange} />
+                            <input type='text' id="lastName" name="apellido" required value={apellido} onChange={handleApellidoChange} />
                         </div>
                         <div className="registration-input-box">
                             <label htmlFor="email">DIRECCION DE CORREO INSTITUCIONAL</label>
@@ -125,7 +130,7 @@ const RegistrationForm = ({ toggleForm }) => {
                         </div>
                         <div className="registration-input-box">
                             <label htmlFor="password">CONTRASEÑA</label>
-                            <input type={showPassword ? 'text' : 'password'} id="password" name="contrasena" required value={password} onChange={handlePasswordChange} />
+                            <input type={showPassword ? 'text' : 'password'} id="password" name="password" required value={password} onChange={handlePasswordChange} />
                             {showPassword ? (
                                 <FaEye className='registration-icon' onClick={togglePasswordVisibility} />
                             ) : (
@@ -134,7 +139,7 @@ const RegistrationForm = ({ toggleForm }) => {
                         </div>
                         <div className="registration-input-box">
                             <label htmlFor="confirmPassword">REPETIR CONTRASEÑA</label>
-                            <input type={showConfirmPassword ? 'text' : 'password'} id="confirmPassword" required value={confirmPassword} onChange={handleConfirmPasswordChange} />
+                            <input type={showConfirmPassword ? 'text' : 'password'} id="confirmPassword" name="confirmPassword" required value={confirmPassword} onChange={handleConfirmPasswordChange} />
                             {showConfirmPassword ? (
                                 <FaEye className='registration-icon' onClick={toggleConfirmPasswordVisibility} />
                             ) : (
@@ -145,7 +150,7 @@ const RegistrationForm = ({ toggleForm }) => {
                         <div className='registration-register-link'>
                             <p>
                                 <RiVipCrownFill className='registration-icon1' />
-                                FISEI <a href='#' onClick={toggleForm}>   |    INICIAR SESION</a>
+                                FISEI <button onClick={toggleForm} style={{ textDecoration: 'underline', color: 'blue', background: 'none', border: 'none', cursor: 'pointer' }}>   |    INICIAR SESION</button>
                             </p>
                         </div>
                     </form>
