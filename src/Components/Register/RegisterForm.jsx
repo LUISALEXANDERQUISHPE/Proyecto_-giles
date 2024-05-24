@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import '../Register/registerForm.css'; // Ajusta la ruta según la ubicación real
+import { Link } from 'react-router-dom';
 import { FaEyeSlash, FaEye } from "react-icons/fa";
 import { RiVipCrownFill } from "react-icons/ri";
 import images from '../Assets/img/images';
+import '../Register/registerForm.css'; 
 
-const RegistrationForm = ({ toggleForm }) => {
+const RegistrationForm = () => {
     const [nombre, setNombre] = useState('');
     const [apellido, setApellido] = useState('');
     const [correoElectronico, setCorreoElectronico] = useState('');
@@ -150,7 +151,7 @@ const RegistrationForm = ({ toggleForm }) => {
                         <div className='registration-register-link'>
                             <p>
                                 <RiVipCrownFill className='registration-icon1' />
-                                FISEI <button onClick={toggleForm} style={{ textDecoration: 'underline', color: 'blue', background: 'none', border: 'none', cursor: 'pointer' }}>   |    INICIAR SESION</button>
+                                FISEI <Link to="/" style={{ textDecoration: 'underline', color: 'blue', cursor: 'pointer' }}>| INICIAR SESION</Link>
                             </p>
                         </div>
                     </form>

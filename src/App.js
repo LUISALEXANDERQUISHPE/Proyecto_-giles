@@ -1,23 +1,18 @@
-import React, { useState } from 'react';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LoginForm from './Components/LoginForm/LoginForm';
 import RegistrationForm from './Components/Register/RegisterForm';
+import MenuForm from './Components/MenuForm/MenuForm';
 
 function App() {
-  const [isRegistering, setIsRegistering] = useState(false);
-
-  const toggleForm = () => {
-    setIsRegistering(!isRegistering);
-  };
-
   return (
-    <div>
-      {isRegistering ? (
-        <RegistrationForm toggleForm={toggleForm} />
-      ) : (
-        <LoginForm toggleForm={toggleForm} />
-      )}
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LoginForm />} />
+        <Route path="/register" element={<RegistrationForm />} />
+        <Route path="/menu" element={<MenuForm />} />
+      </Routes>
+    </Router>
   );
 }
 
