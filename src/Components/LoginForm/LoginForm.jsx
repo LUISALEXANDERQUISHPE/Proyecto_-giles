@@ -8,6 +8,8 @@ import './LoginForm.css';
 const LoginForm = () => {
     const [correoElectronico, setCorreoElectronico] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+
 
 
     const handleCorreoElectronicoChange = (e) => {
@@ -17,12 +19,14 @@ const LoginForm = () => {
 
     const handleCorreoElectronicoBlur = () => {
         if (!correoElectronico.endsWith('@uta.edu.ec')) {
-            alert('El correo debe terminar en @uta.edu.ec');
+           setError('El correo debe terminar en @uta.edu.ec');
+        }else {
+            setError(''); // Limpiar el error si el correo ahora es correcto
         }
     };
     const handleSubmit = async (event) => {
         event.preventDefault();
-    
+        setError(''); // Limpiar errores previos
         try {
             const response = await fetch('/login', {
                 method: 'POST',
@@ -37,23 +41,19 @@ const LoginForm = () => {
     
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+                setError(errorData.error || `HTTP error! status: ${response.status}`);
+                return; // Detener la ejecución más allá de este punto si hay un error
             }
     
-            if (response.headers.get('Content-Type')?.includes('application/json')) {
-                const data = await response.json(); // Analiza la respuesta como JSON solo si es JSON
-                window.location.href = '/menu'; // Si la respuesta es exitosa, redirige al usuario a la página de menu
-            } else {
-                const errorText = await response.text(); // Manejo de la respuesta cuando no es JSON
-                console.error('Response not JSON:', errorText);
-                alert('Error en el servidor, la respuesta no es JSON.');
-            }
+            const data = await response.json(); // Analiza la respuesta como JSON
+            localStorage.setItem('isAuthenticated', 'true'); // Almacenar estado de autenticación
+            window.location.href = '/menu'; // Redirigir al usuario al menú
+    
         } catch (error) {
             console.error('Error al iniciar sesión:', error);
-            alert(error.message || 'Error al iniciar sesión');
+            setError(error.message || 'Error al iniciar sesión');
         }
     };
-    
     
     
     
@@ -64,6 +64,7 @@ const LoginForm = () => {
                     <form onSubmit={handleSubmit}>
                         <h1>Universidad Técnica<br />de Ambato</h1>
                         <h2>ADMINISTRACION DE TITULACION</h2>
+                        {error && <div className="error-message">{error}</div>}
                         <div className="input-box">
                             <label htmlFor="email">DIRECCION DE CORREO INSTITUCIONAL</label>
                             <input type='email' id="email" required value={correoElectronico} onChange={handleCorreoElectronicoChange} onBlur={handleCorreoElectronicoBlur} />

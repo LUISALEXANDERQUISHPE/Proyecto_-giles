@@ -179,3 +179,10 @@
     max-width: 60%; /* Ajusta el tamaño máximo de la imagen */
     max-height: 50%; /* Ajusta el tamaño máximo de la imagen */
 }
+
+.error-message {
+    color: red;
+    font-weight: bold;
+    margin: 14px 0px 0px 108px;
+    font-size: 17px;
+}

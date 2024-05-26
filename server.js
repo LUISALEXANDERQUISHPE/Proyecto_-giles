@@ -84,11 +84,11 @@ app.post('/login', (req, res) => {
     db.query(checkQuery, [correo_electronico], (err, results) => {
         if (err) {
             console.error("Error al verificar el correo electrónico:", err);
-            return res.status(500).send({ error: "Error al verificar el correo electrónico en la base de datos" });
+            return res.status(500).send({ error: "Problemas técnicos al verificar el usuario." });
         }
         
         if (results.length === 0) {
-            return res.status(400).send({ error: "El correo electrónico no está registrado en la base de datos" });
+            return res.status(400).send({ error: "Usuario no encontrado. Verifica tu correo electrónico." });
         }
 
         // Si el correo electrónico está registrado, verifica la contraseña
@@ -96,31 +96,19 @@ app.post('/login', (req, res) => {
         bcrypt.compare(contrasenia, hashedPassword, (bcryptErr, bcryptResult) => {
             if (bcryptErr) {
                 console.error("Error al comparar contraseñas:", bcryptErr);
-                return res.status(500).send({ error: "Error al comparar contraseñas" });
+                return res.status(500).send({ error: "Problemas técnicos al verificar la contraseña." });
             }
 
             if (!bcryptResult) {
-                return res.status(400).send({ error: "La contraseña es incorrecta" });
+                return res.status(400).send({ error: "Contraseña incorrecta." });
             }
 
             // Si la contraseña es correcta, envía un mensaje de inicio de sesión exitoso
-            return res.status(200).send({ message: "Inicio de sesión exitoso" });
+            // Aquí también podrías considerar enviar un token de sesión o un identificador de sesión
+            res.status(200).send({ message: "Inicio de sesión exitoso", userId: results[0].id });
         });
     });
 });
-
-//        res.status(200).send({ message: "El correo electrónico está registrado en la base de datos" });
-
-
-function validateEmail(email) {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-}
-
-
-
-
-
 
 
 app.listen(5000, () => {
