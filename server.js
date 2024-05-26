@@ -1,3 +1,4 @@
+
 const express = require("express");
 const mysql = require("mysql");
 const bcrypt = require('bcrypt');
@@ -25,27 +26,90 @@ db.connect((err) => {
 });
 
 app.post("/create", (req, res) => {
-    console.log("Datos recibidos:", req.body);
     const { nombre, apellido, correo_electronico, contrasenia } = req.body;
+    const nombreUpper = nombre.toUpperCase();
+    const apellidoUpper = apellido.toUpperCase();
 
-    bcrypt.hash(contrasenia, 10, (err, hash) => {
+    // Verificar si el usuario ya está registrado por nombres y apellidos
+    const checkQuery = 'SELECT COUNT(*) AS count FROM tutores WHERE nombre = ? AND apellido = ?';
+    db.query(checkQuery, [nombreUpper, apellidoUpper], (err, results) => {
         if (err) {
-            console.error('Error al hashear la contraseña:', err);
-            return res.status(500).send({ error: "Error al procesar la contraseña" });
+            console.error('Error al verificar el usuario:', err);
+            return res.status(500).send({ error: "Error al verificar el usuario" });
         }
-        db.query(
-            'INSERT INTO tutores (nombre, apellido, correo_electronico, contrasenia) VALUES (?, ?, ?, ?)',
-            [nombre, apellido, correo_electronico, hash],
-            (error, results) => {
-                if (error) {
-                    console.error('Error al insertar en la base de datos:', error);
-                    return res.status(500).send({ error: "Error al registrar al tutor" });
-                }
-                res.status(201).send({ message: "Tutor registrado con éxito", id: results.insertId });
+
+        if (results[0].count > 0) {
+            // El usuario ya está registrado
+            return res.status(400).send({ error: "El usuario ya está registrado" });
+        }
+
+        // Si el usuario no está registrado por nombres y apellidos, comprobar por correo electrónico
+        const checkCorreoQuery = 'SELECT COUNT(*) AS count FROM tutores WHERE correo_electronico = ?';
+        db.query(checkCorreoQuery, [correo_electronico], (errCorreo, resultsCorreo) => {
+            if (errCorreo) {
+                console.error('Error al verificar el correo electrónico:', errCorreo);
+                return res.status(500).send({ error: "Error al verificar el correo electrónico" });
             }
-        );
+
+            if (resultsCorreo[0].count > 0) {
+                // El correo electrónico ya está registrado
+                return res.status(400).send({ error: "El correo electrónico ya está registrado" });
+            }
+
+            // Si el usuario no está registrado por correo electrónico, proceder con el registro
+            bcrypt.hash(contrasenia, 10, (errHash, hash) => {
+                if (errHash) {
+                    console.error('Error al hashear la contraseña:', errHash);
+                    return res.status(500).send({ error: "Error al procesar la contraseña" });
+                }
+
+                const insertQuery = 'INSERT INTO tutores (nombre, apellido, correo_electronico, contrasenia) VALUES (?, ?, ?, ?)';
+                db.query(insertQuery, [nombreUpper, apellidoUpper, correo_electronico, hash], (errorInsert, resultsInsert) => {
+                    if (errorInsert) {
+                        console.error('Error al insertar en la base de datos:', errorInsert);
+                        return res.status(500).send({ error: "Error al registrar al tutor" });
+                    }
+                    res.status(201).send({ message: "Tutor registrado con éxito", id: resultsInsert.insertId });
+                });
+            });
+        });
     });
 });
+// Método en el servidor
+app.post('/login', (req, res) => {
+    const { correo_electronico, contrasenia } = req.body;
+    
+    // Consulta para verificar si el correo electrónico está registrado en la base de datos
+    const checkQuery = 'SELECT contrasenia FROM tutores WHERE correo_electronico = ?';
+    db.query(checkQuery, [correo_electronico], (err, results) => {
+        if (err) {
+            console.error("Error al verificar el correo electrónico:", err);
+            return res.status(500).send({ error: "Problemas técnicos al verificar el usuario." });
+        }
+        
+        if (results.length === 0) {
+            return res.status(400).send({ error: "Usuario no encontrado. Verifica tu correo electrónico." });
+        }
+
+        // Si el correo electrónico está registrado, verifica la contraseña
+        const hashedPassword = results[0].contrasenia;
+        bcrypt.compare(contrasenia, hashedPassword, (bcryptErr, bcryptResult) => {
+            if (bcryptErr) {
+                console.error("Error al comparar contraseñas:", bcryptErr);
+                return res.status(500).send({ error: "Problemas técnicos al verificar la contraseña." });
+            }
+
+            if (!bcryptResult) {
+                return res.status(400).send({ error: "Contraseña incorrecta." });
+            }
+
+            // Si la contraseña es correcta, envía un mensaje de inicio de sesión exitoso
+            // Aquí también podrías considerar enviar un token de sesión o un identificador de sesión
+            res.status(200).send({ message: "Inicio de sesión exitoso", userId: results[0].id });
+        });
+    });
+});
+
 
 app.listen(5000, () => {
     console.log("Server is running on port 5000");
