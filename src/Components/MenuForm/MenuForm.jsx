@@ -72,11 +72,16 @@ const MenuForm = () => {
           </div>
         </div>
         <div className="profile-section">
-          <img src={images.img4} alt="Perfil" />
-          <h1>Bienvenido tutor/a.</h1>
-          <p>{userName}</p>
-          <p>{userEmail}</p>
-        </div>
+  <h1>Bienvenido<br />tutor/a.</h1>
+  <div class="profile-info">
+    <img src={images.img4} alt="Perfil" />
+    <div class="user-details">
+      <p>{userName}</p>
+      <p>{userEmail}</p>
+    </div>
+  </div>
+</div>
+
       </div>
     </div>
   );

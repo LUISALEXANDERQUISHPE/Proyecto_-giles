@@ -98,20 +98,50 @@ body, html {
     align-items: center;
     text-align: center;
   }
-  
-  .main-content .profile-section img {
-    width: 200px;
-    border-radius: 50%;
-  }
-  
   .main-content .profile-section h1 {
     font-size: 24px;
-    margin-top: 10px;
-  }
-  
-  .main-content .profile-section p {
-    font-size: 18px;
-  }
+    margin-top: -60px;
+    font-size: 68px;
+    font-family: 'Times New Roman', Times, serif;
+}
+.main-content .profile-section img {
+  width: 300px;
+  border-radius: 50%;
+  float: left; /* Hace que la imagen se alinee a la izquierda */
+  margin-top: 40px;
+  margin-right: 20px; /* Agrega un espacio entre la imagen y el párrafo */
+}
+
+.main-content .profile-section p {
+  font-size: 20px;
+  margin-top: 20px; /* Elimina el margen superior para que el párrafo esté alineado con la imagen */
+}
+.profile-section {
+  display: flex; /* Utiliza flexbox para organizar los elementos */
+  align-items: center; /* Centra verticalmente los elementos */
+}
+
+.profile-info {
+  display: flex; /* Utiliza flexbox para organizar los elementos */
+  align-items: center; /* Centra verticalmente los elementos */
+}
+
+.profile-section img {
+  width: 300px;
+  border-radius: 50%;
+  margin-right: 20px; /* Agrega un espacio entre la imagen y la información del usuario */
+}
+
+.user-details {
+  display: flex; /* Utiliza flexbox para organizar los elementos */
+  flex-direction: column; /* Organiza los detalles del usuario en una columna */
+}
+
+.user-details p {
+  margin: 0; /* Elimina el margen entre los elementos p */
+}
+
+
   
   .footer {
     text-align: center;
