@@ -1,4 +1,3 @@
-
 const express = require("express");
 const mysql = require("mysql");
 const bcrypt = require('bcrypt');
@@ -30,7 +29,6 @@ app.post("/create", (req, res) => {
     const nombreUpper = nombre.toUpperCase();
     const apellidoUpper = apellido.toUpperCase();
 
-    // Verificar si el usuario ya está registrado por nombres y apellidos
     const checkQuery = 'SELECT COUNT(*) AS count FROM tutores WHERE nombre = ? AND apellido = ?';
     db.query(checkQuery, [nombreUpper, apellidoUpper], (err, results) => {
         if (err) {
@@ -39,11 +37,9 @@ app.post("/create", (req, res) => {
         }
 
         if (results[0].count > 0) {
-            // El usuario ya está registrado
             return res.status(400).send({ error: "El usuario ya está registrado" });
         }
 
-        // Si el usuario no está registrado por nombres y apellidos, comprobar por correo electrónico
         const checkCorreoQuery = 'SELECT COUNT(*) AS count FROM tutores WHERE correo_electronico = ?';
         db.query(checkCorreoQuery, [correo_electronico], (errCorreo, resultsCorreo) => {
             if (errCorreo) {
@@ -52,11 +48,9 @@ app.post("/create", (req, res) => {
             }
 
             if (resultsCorreo[0].count > 0) {
-                // El correo electrónico ya está registrado
                 return res.status(400).send({ error: "El correo electrónico ya está registrado" });
             }
 
-            // Si el usuario no está registrado por correo electrónico, proceder con el registro
             bcrypt.hash(contrasenia, 10, (errHash, hash) => {
                 if (errHash) {
                     console.error('Error al hashear la contraseña:', errHash);
@@ -69,31 +63,29 @@ app.post("/create", (req, res) => {
                         console.error('Error al insertar en la base de datos:', errorInsert);
                         return res.status(500).send({ error: "Error al registrar al tutor" });
                     }
-                    res.status(201).send({ message: "Tutor registrado con éxito", id: resultsInsert.insertId });
+                    res.status(201).send({ message: "Tutor registrado con éxito" });
                 });
             });
         });
     });
 });
-// Método en el servidor
+
 app.post('/login', (req, res) => {
     const { correo_electronico, contrasenia } = req.body;
-    
-    // Consulta para verificar si el correo electrónico está registrado en la base de datos
-    const checkQuery = 'SELECT contrasenia FROM tutores WHERE correo_electronico = ?';
+
+    const checkQuery = 'SELECT nombre, apellido, contrasenia FROM tutores WHERE correo_electronico = ?';
     db.query(checkQuery, [correo_electronico], (err, results) => {
         if (err) {
             console.error("Error al verificar el correo electrónico:", err);
             return res.status(500).send({ error: "Problemas técnicos al verificar el usuario." });
         }
-        
+
         if (results.length === 0) {
             return res.status(400).send({ error: "Usuario no encontrado. Verifica tu correo electrónico." });
         }
 
-        // Si el correo electrónico está registrado, verifica la contraseña
-        const hashedPassword = results[0].contrasenia;
-        bcrypt.compare(contrasenia, hashedPassword, (bcryptErr, bcryptResult) => {
+        const user = results[0];
+        bcrypt.compare(contrasenia, user.contrasenia, (bcryptErr, bcryptResult) => {
             if (bcryptErr) {
                 console.error("Error al comparar contraseñas:", bcryptErr);
                 return res.status(500).send({ error: "Problemas técnicos al verificar la contraseña." });
@@ -103,13 +95,14 @@ app.post('/login', (req, res) => {
                 return res.status(400).send({ error: "Contraseña incorrecta." });
             }
 
-            // Si la contraseña es correcta, envía un mensaje de inicio de sesión exitoso
-            // Aquí también podrías considerar enviar un token de sesión o un identificador de sesión
-            res.status(200).send({ message: "Inicio de sesión exitoso", userId: results[0].id });
+            res.status(200).send({
+                message: "Inicio de sesión exitoso",
+                nombre: user.nombre,
+                apellido: user.apellido
+            });
         });
     });
 });
-
 
 app.listen(5000, () => {
     console.log("Server is running on port 5000");
