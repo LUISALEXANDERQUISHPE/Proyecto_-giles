@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaEyeSlash } from "react-icons/fa";
+import { FaEyeSlash, FaEye } from "react-icons/fa";
 import { RiVipCrownFill } from "react-icons/ri";
 import images from '../Assets/img/images';
 import './LoginForm.css';
@@ -9,8 +9,7 @@ const LoginForm = () => {
     const [correoElectronico, setCorreoElectronico] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-
-
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleCorreoElectronicoChange = (e) => {
         const value = e.target.value;
@@ -19,11 +18,16 @@ const LoginForm = () => {
 
     const handleCorreoElectronicoBlur = () => {
         if (!correoElectronico.endsWith('@uta.edu.ec')) {
-           setError('El correo debe terminar en @uta.edu.ec');
-        }else {
+            setError('El correo debe terminar en @uta.edu.ec');
+        } else {
             setError(''); // Limpiar el error si el correo ahora es correcto
         }
     };
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         setError(''); // Limpiar errores previos
@@ -38,25 +42,25 @@ const LoginForm = () => {
                     contrasenia: password
                 }),
             });
-    
+
             if (!response.ok) {
                 const errorData = await response.json();
                 setError(errorData.error || `HTTP error! status: ${response.status}`);
                 return; // Detener la ejecución más allá de este punto si hay un error
             }
-    
+
             const data = await response.json(); // Analiza la respuesta como JSON
             localStorage.setItem('isAuthenticated', 'true'); // Almacenar estado de autenticación
+            localStorage.setItem('userName', data.nombre); // Guardar nombre de usuario
+            localStorage.setItem('userEmail', correoElectronico); // Guardar correo electrónico del usuario
             window.location.href = '/menu'; // Redirigir al usuario al menú
-    
+
         } catch (error) {
             console.error('Error al iniciar sesión:', error);
             setError(error.message || 'Error al iniciar sesión');
         }
     };
-    
-    
-    
+
     return (
         <div className='container'>
             <div className='login-wrapper'>
@@ -71,8 +75,12 @@ const LoginForm = () => {
                         </div>
                         <div className="input-box">
                             <label htmlFor="password">CONTRASEÑA</label>
-                            <input type='password' id="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
-                            <FaEyeSlash className='icon' />
+                            <input type={showPassword ? 'text' : 'password'} id="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
+                            {showPassword ? (
+                                <FaEye className='icon' onClick={togglePasswordVisibility} />
+                            ) : (
+                                <FaEyeSlash className='icon' onClick={togglePasswordVisibility} />
+                            )}
                         </div>
                         <div className="remember-forgot">
                             <label><input type='checkbox' /> RECUERDAME</label>
