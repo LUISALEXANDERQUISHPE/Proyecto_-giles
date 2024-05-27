@@ -19,7 +19,7 @@ const LoginForm = () => {
 
     const handleCorreoElectronicoBlur = () => {
         if (!correoElectronico.endsWith('@uta.edu.ec')) {
-           setError('El correo debe terminar en @uta.edu.ec');
+            setError('El correo debe terminar en @uta.edu.ec');
         }else {
             setError(''); // Limpiar el error si el correo ahora es correcto
         }
