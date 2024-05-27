@@ -85,8 +85,8 @@ body, html {
   }
   
   .main-content .top-bar .user-info img {
-    height: 80px;
-    margin-right: 500px; /* Ajusta el espacio entre la imagen y el texto */
+    height: 100px;
+    margin-right: 330px; /* Ajusta el espacio entre la imagen y el texto */
     
   }
   

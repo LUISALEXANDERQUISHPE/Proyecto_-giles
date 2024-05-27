@@ -12,15 +12,14 @@ const LoginForm = () => {
     const [showPassword, setShowPassword] = useState(false);
 
     const handleCorreoElectronicoChange = (e) => {
-        const value = e.target.value;
-        setCorreoElectronico(value);
+        setCorreoElectronico(e.target.value);
     };
 
     const handleCorreoElectronicoBlur = () => {
         if (!correoElectronico.endsWith('@uta.edu.ec')) {
             setError('El correo debe terminar en @uta.edu.ec');
         } else {
-            setError(''); // Limpiar el error si el correo ahora es correcto
+            setError('');
         }
     };
 
@@ -28,11 +27,11 @@ const LoginForm = () => {
         setShowPassword(!showPassword);
     };
 
-    const handleSubmit = async (event) => {
+    const onSubmit = async (event) => {
         event.preventDefault();
-        setError(''); // Limpiar errores previos
+        setError('');
         try {
-            const response = await fetch('/login', {
+            const response = await fetch('http://localhost:5000/login', { // Asegúrate de que la URL sea correcta
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -46,14 +45,14 @@ const LoginForm = () => {
             if (!response.ok) {
                 const errorData = await response.json();
                 setError(errorData.error || `HTTP error! status: ${response.status}`);
-                return; // Detener la ejecución más allá de este punto si hay un error
+                return;
             }
 
-            const data = await response.json(); // Analiza la respuesta como JSON
-            localStorage.setItem('isAuthenticated', 'true'); // Almacenar estado de autenticación
-            localStorage.setItem('userName', data.nombre); // Guardar nombre de usuario
-            localStorage.setItem('userEmail', correoElectronico); // Guardar correo electrónico del usuario
-            window.location.href = '/menu'; // Redirigir al usuario al menú
+            const data = await response.json();
+            localStorage.setItem('isAuthenticated', 'true');
+            localStorage.setItem('userName', `${data.nombre} ${data.apellido}`);
+            localStorage.setItem('userEmail', correoElectronico);
+            window.location.href = '/menu';
 
         } catch (error) {
             console.error('Error al iniciar sesión:', error);
@@ -65,17 +64,30 @@ const LoginForm = () => {
         <div className='container'>
             <div className='login-wrapper'>
                 <div className='wrapper'>
-                    <form onSubmit={handleSubmit}>
+                    <form onSubmit={onSubmit}>
                         <h1>Universidad Técnica<br />de Ambato</h1>
                         <h2>ADMINISTRACION DE TITULACION</h2>
                         {error && <div className="error-message">{error}</div>}
                         <div className="input-box">
                             <label htmlFor="email">DIRECCION DE CORREO INSTITUCIONAL</label>
-                            <input type='email' id="email" required value={correoElectronico} onChange={handleCorreoElectronicoChange} onBlur={handleCorreoElectronicoBlur} />
+                            <input
+                                type='email'
+                                id="email"
+                                required
+                                value={correoElectronico}
+                                onChange={handleCorreoElectronicoChange}
+                                onBlur={handleCorreoElectronicoBlur}
+                            />
                         </div>
                         <div className="input-box">
                             <label htmlFor="password">CONTRASEÑA</label>
-                            <input type={showPassword ? 'text' : 'password'} id="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
+                            <input
+                                type={showPassword ? 'text' : 'password'}
+                                id="password"
+                                required
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
                             {showPassword ? (
                                 <FaEye className='icon' onClick={togglePasswordVisibility} />
                             ) : (
