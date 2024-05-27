@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom'; // Importar Link
 import './MenuFrom.css';
 import { FaUser, FaSignOutAlt, FaQuestionCircle } from 'react-icons/fa';
 import { MdSchool } from 'react-icons/md';
@@ -43,6 +44,13 @@ const MenuForm = () => {
     }
   };
 
+  // Función para manejar el cierre de sesión
+  const handleLogout = () => {
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userEmail');
+  };
+
   return (
     <div className="container">
       <div className="sidebar">
@@ -66,8 +74,10 @@ const MenuForm = () => {
         </div>
         <div className="footer">
           <div className="menu-item">
-            <FaSignOutAlt />
-            <span>Cerrar sesión</span>
+            <Link to="/" onClick={handleLogout}>
+              <FaSignOutAlt />
+              <span>Cerrar sesión</span>
+            </Link>
           </div>
           <div className="menu-item">
             <FaQuestionCircle />
