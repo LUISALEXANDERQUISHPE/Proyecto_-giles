@@ -210,6 +210,11 @@
     object-fit: contain;
 }
 
-
+.error-message {
+    color: red;
+    font-weight: bold;
+    margin: 14px 0px 0px 108px;
+    font-size: 17px;
+}
 
 

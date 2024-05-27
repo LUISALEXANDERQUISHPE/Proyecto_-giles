@@ -14,7 +14,7 @@ const RegistrationForm = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
+    const [error, setError] = useState('');
 
     const handlePasswordChange = (e) => {
         setPassword(e.target.value);
@@ -30,7 +30,7 @@ const RegistrationForm = () => {
         if (regex.test(value)) {
             setNombre(value);
         } else {
-            alert('El nombre solo puede contener letras y espacios');
+            setError('El nombre solo puede contener letras y espacios');
         }
     };
 
@@ -40,7 +40,7 @@ const RegistrationForm = () => {
         if (regex.test(value)) {
             setApellido(value);
         } else {
-            alert('El apellido solo puede contener letras y espacios');
+            setError('El apellido solo puede contener letras y espacios');
         }
     };
 
@@ -51,7 +51,9 @@ const RegistrationForm = () => {
 
     const handleCorreoElectronicoBlur = () => {
         if (!correoElectronico.endsWith('@uta.edu.ec')) {
-            alert('El correo debe terminar en @uta.edu.ec');
+            setError('El correo debe terminar en @uta.edu.ec');
+        }else{
+            setError('');
         }
     };
 
@@ -63,9 +65,17 @@ const RegistrationForm = () => {
         setShowConfirmPassword(!showConfirmPassword);
     };
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (event) => {        
         event.preventDefault();
-    
+        if(!correoElectronico.endsWith('@uta.edu.ec')){
+            setError('El correo debe ser unicamente institucional');
+            return;
+        }
+        if (password !== confirmPassword) {
+            setError('Las contraseñas no coinciden');
+            return;
+        }
+        setError('');
         try {
             const response = await fetch('/create', {
                 method: 'POST',
@@ -84,10 +94,11 @@ const RegistrationForm = () => {
                 const errorData = await response.json();
                 throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
             }
+            setError('Usuario registrado con éxito.');
+            
     
             const data = await response.json();
             setSuccessMessage(data.message);
-            setErrorMessage('');
             // Limpiar los campos del formulario si es necesario
             setNombre('');
             setApellido('');
@@ -96,8 +107,7 @@ const RegistrationForm = () => {
             setConfirmPassword('');
         } catch (error) {
             console.error('Error al enviar el formulario:', error);
-            setErrorMessage(error.message);
-            setSuccessMessage('');
+            setError(error.message || 'Error al enviar el formulario');
         }
     };
 
@@ -116,7 +126,7 @@ const RegistrationForm = () => {
 
                         <h1>Registrarse</h1>
                         {successMessage && <p className="success-message">{successMessage}</p>}
-                        {errorMessage && <p className="error-message">{errorMessage}</p>}
+                        {error && <p className="error-message">{error}</p>}
                         <div className="registration-input-box">
                             <label htmlFor="firstName">NOMBRES</label>
                             <input type='text' id="firstName" name="nombre" required value={nombre} onChange={handleNombreChange} />
@@ -150,8 +160,8 @@ const RegistrationForm = () => {
                         <button type='submit' className='registration-button'>REGISTRARSE</button>
                         <div className='registration-register-link'>
                             <p>
-                                <RiVipCrownFill className='registration-icon1' />
-                                FISEI <Link to="/" style={{ textDecoration: 'underline', color: 'blue', cursor: 'pointer' }}>| INICIAR SESION</Link>
+                                <RiVipCrownFill className='registration-icon1 ' />
+                                FISEI <Link to="/" >| INICIAR SESION</Link>
                             </p>
                         </div>
                     </form>

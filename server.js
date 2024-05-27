@@ -48,7 +48,10 @@ app.post("/create", (req, res) => {
             }
 
             if (resultsCorreo[0].count > 0) {
-                return res.status(400).send({ error: "El correo electrónico ya está registrado" });
+
+                // El correo electrónico ya está registrado
+                return res.status(400).send({ error: "Ya se encuentra un usuario registrado con ese correo" });
+
             }
 
             bcrypt.hash(contrasenia, 10, (errHash, hash) => {
@@ -63,7 +66,10 @@ app.post("/create", (req, res) => {
                         console.error('Error al insertar en la base de datos:', errorInsert);
                         return res.status(500).send({ error: "Error al registrar al tutor" });
                     }
-                    res.status(201).send({ message: "Tutor registrado con éxito" });
+
+                   // res.status(200).send({ error: "Usuario registrado con exito", id: resultsInsert.insertId });
+
+
                 });
             });
         });
