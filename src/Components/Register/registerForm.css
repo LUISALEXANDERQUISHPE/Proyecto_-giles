@@ -167,18 +167,17 @@
 }
 
 .registration-image-wrapper {
+    background: #7c121f;
     width: 50%; /* Utiliza el 50% del ancho total de la pantalla */
-    max-width: calc(50vw - 10px); /* Incrementa el ancho máximo del contenedor */
     position: fixed; /* Mantiene el contenedor fijo en la mitad izquierda */
     left: 0;
-    top: 20%;
-    bottom: 0;
+    top: 0;
+    bottom: 0; /* Esto asegura que se extienda hasta la parte inferior de la vista */
     display: flex;
-    justify-content: center; /* Centra la imagen horizontalmente */
-    align-items: center; /* Alinea la imagen hacia el inicio (parte superior) del contenedor */
-    padding-top: 50px; /* Añade espacio en la parte superior para mover la imagen hacia abajo */
-    padding: 20px; /* Añade un poco de padding alrededor del contenedor */
+    justify-content: center;
+    align-items: center;
 }
+
 
 .registration-image-wrapper img {
     width: 60%; /* Incrementa el ancho de la imagen */
@@ -216,5 +215,14 @@
     margin: 14px 0px 0px 108px;
     font-size: 17px;
 }
+ .img-fisei{
+    height: 105px;
+ }
 
-
+.imgUta{
+    text-align: center;
+    width: 305px;
+}
+.conta{
+    background-color: #7c121f;
+}

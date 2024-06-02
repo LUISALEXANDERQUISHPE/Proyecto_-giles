@@ -113,15 +113,22 @@ const RegistrationForm = () => {
 
     return (
         <div className='registration-container'>
-            <div className="registration-image-wrapper">
-                <img src={images.img1} alt="Descripción de la imagen" />
+            <div className='conta'>
+                <div className="registration-image-wrapper">
+                    <div className='imgUta'>
+                    <img src={images.img1} alt="Descripción de la imagen" />
+                    </div>
+                </div>
             </div>
+         
 
             <div className='registration-wrapper'>
                 <div className='registration-form-wrapper'>
                     <form onSubmit={handleSubmit}>
                         <div className='registration-image-wrapper1'>
+                            <div className='img-fisei'>
                             <img src={images.img3} alt="Descripción de la imagen" />
+                            </div>
                         </div>
 
                         <h1>Registrarse</h1>

@@ -29,7 +29,7 @@ app.post("/create", (req, res) => {
     const nombreUpper = nombre.toUpperCase();
     const apellidoUpper = apellido.toUpperCase();
 
-    const checkQuery = 'SELECT COUNT(*) AS count FROM tutores WHERE nombre = ? AND apellido = ?';
+    const checkQuery = 'SELECT COUNT(*) AS count FROM tutores WHERE nombres = ? AND apellidos = ?';
     db.query(checkQuery, [nombreUpper, apellidoUpper], (err, results) => {
         if (err) {
             console.error('Error al verificar el usuario:', err);
@@ -60,7 +60,7 @@ app.post("/create", (req, res) => {
                     return res.status(500).send({ error: "Error al procesar la contraseña" });
                 }
 
-                const insertQuery = 'INSERT INTO tutores (nombre, apellido, correo_electronico, contrasenia) VALUES (?, ?, ?, ?)';
+                const insertQuery = 'INSERT INTO tutores (nombres, apellidos, correo_electronico, contrasenia) VALUES (?, ?, ?, ?)';
                 db.query(insertQuery, [nombreUpper, apellidoUpper, correo_electronico, hash], (errorInsert, resultsInsert) => {
                     if (errorInsert) {
                         console.error('Error al insertar en la base de datos:', errorInsert);
@@ -68,7 +68,6 @@ app.post("/create", (req, res) => {
                     }
 
                    // res.status(200).send({ error: "Usuario registrado con exito", id: resultsInsert.insertId });
-
 
                 });
             });
@@ -79,7 +78,7 @@ app.post("/create", (req, res) => {
 app.post('/login', (req, res) => {
     const { correo_electronico, contrasenia } = req.body;
 
-    const checkQuery = 'SELECT nombre, apellido, contrasenia FROM tutores WHERE correo_electronico = ?';
+    const checkQuery = 'SELECT nombres, apellidos, contrasenia FROM tutores WHERE correo_electronico = ?';
     db.query(checkQuery, [correo_electronico], (err, results) => {
         if (err) {
             console.error("Error al verificar el correo electrónico:", err);
@@ -103,8 +102,8 @@ app.post('/login', (req, res) => {
 
             res.status(200).send({
                 message: "Inicio de sesión exitoso",
-                nombre: user.nombre,
-                apellido: user.apellido
+                nombre: user.nombres,
+                apellido: user.apellidos
             });
         });
     });

@@ -17,7 +17,7 @@ const LoginForm = () => {
 
     const handleCorreoElectronicoBlur = () => {
         if (!correoElectronico.endsWith('@uta.edu.ec')) {
-            setError('El correo debe terminar en @uta.edu.ec');
+            setError('El correo debe ser institucional');
 
         }else {
             setError(''); // Limpiar el error si el correo ahora es correcto
@@ -79,6 +79,7 @@ const LoginForm = () => {
                                 value={correoElectronico}
                                 onChange={handleCorreoElectronicoChange}
                                 onBlur={handleCorreoElectronicoBlur}
+                                placeholder='user@uta.edu.ec'
                             />
                         </div>
                         <div className="input-box">
@@ -87,6 +88,7 @@ const LoginForm = () => {
                                 type={showPassword ? 'text' : 'password'}
                                 id="password"
                                 required
+                                placeholder='**************'
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
@@ -109,11 +111,13 @@ const LoginForm = () => {
                     </form>
                 </div>
             </div>
-            <div className="image-wrapper">
-                <img src={images.img1} alt="Descripción de la imagen" />
-            </div>
-            <div className="image-wrapper1">
-                <img src={images.img2} alt="Descripción de la imagen" />
+            <div className='Container'>
+                <div className="image-wrapper">
+                    <img src={images.img1} alt="Descripción de la imagen" />
+                </div>
+                <div className="image-wrapper1">
+                    <img src={images.img2} alt="Descripción de la imagen" />
+                </div>
             </div>
         </div>
     );
