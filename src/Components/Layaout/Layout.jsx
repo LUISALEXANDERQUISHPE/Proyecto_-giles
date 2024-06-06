@@ -8,6 +8,7 @@ const Layout = () => {
     localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('userName');
     localStorage.removeItem('userEmail');
+    localStorage.removeItem('userId'); 
     window.location.href = '/';
   };
 

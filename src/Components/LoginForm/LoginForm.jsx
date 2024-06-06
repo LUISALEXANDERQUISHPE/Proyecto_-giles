@@ -51,9 +51,11 @@ const LoginForm = () => {
             }
 
             const data = await response.json();
+            console.log("Datos recibidos del servidor:", data);
             localStorage.setItem('isAuthenticated', 'true');
             localStorage.setItem('userName', `${data.nombre} ${data.apellido}`);
             localStorage.setItem('userEmail', correoElectronico);
+            localStorage.setItem('userId', data.id_tutor);
             window.location.href = '/menu';
 
         } catch (error) {
