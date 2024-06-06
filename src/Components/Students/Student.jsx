@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { FaQuestionCircle } from 'react-icons/fa';
 import images from '../Assets/img/images';
 import './Student.css';
 import { successAlert, errorAlert } from '../Alerts/Alerts';
@@ -51,7 +53,8 @@ const RegStudents = () => {
         <label>
           Carrera
           <select value={filterCarrera} onChange={(e) => setFilterCarrera(e.target.value)}>
-            <option value="">Software</option>
+            <option value="">Seleccionar carrera</option>
+            <option value="Software">Software</option>
             {/* Map over carreras if needed */}
           </select>
         </label>
@@ -62,7 +65,9 @@ const RegStudents = () => {
         <label>
           Estado
           <select value={filterEstado} onChange={(e) => setFilterEstado(e.target.value)}>
-            <option value="">En proceso</option>
+            <option value="">Seleccionar estado</option>
+            <option value="En proceso">En proceso</option>
+            <option value="Completado">Completado</option>
             {/* Add more states if needed */}
           </select>
         </label>
@@ -85,7 +90,12 @@ const RegStudents = () => {
               <td>{student.nombre_carrera}</td>
               <td>{student.porcentaje_avance}%</td>
               <td>{student.estado}</td>
-              <td><a href="#">Revisar</a></td>
+              <td>
+                <Link to="/Review">
+                  <FaQuestionCircle />
+                  <span>Review</span>
+                </Link>
+              </td>
             </tr>
           ))}
         </tbody>

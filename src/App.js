@@ -6,7 +6,8 @@ import RequireAuth from './Components/RequireAuthentic/RequireAuth';
 import Layout from './Components/Layaout/Layout'; // Importa el layout
 import UserProfile from './Components/UserProfile/UserProfile'; // Importa el perfil de usuario
 import RegEstudent from './Components/RegEstudent/RegistroEstudent'; // Importa el registro de estudiantes
-import Students from './Components/Students/Student'
+import Students from './Components/Students/Student';
+import Review from './Components/Review/Review'
 
 function App() {
     useEffect(() => {
@@ -27,6 +28,7 @@ function App() {
                     <Route path="/profile" element={<UserProfile />} />
                     <Route path="/register-student" element={<RegEstudent />} /> {/* Agrega esta línea */}
                     <Route path="/student" element={<Students />} /> {/* Agrega esta línea */}
+                    <Route path="/Review" element={<Review />} /> {/* Agrega esta línea */}
                 </Route>
             </Routes>
         </Router>
