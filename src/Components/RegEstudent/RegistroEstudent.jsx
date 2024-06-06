@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import images from '../Assets/img/images';
 import './RegistroEstudent.css';
+import { successAlert, errorAlert } from '../Alerts/Alerts'; 
+
 
 const RegStudents = () => {
   const [carreras, setCarreras] = useState([]);
@@ -55,6 +57,7 @@ const RegStudents = () => {
     setIdCarrera(e.target.value);
     console.log("Carrera seleccionada:", e.target.value);
   };
+  const tutorId = localStorage.getItem('userId');
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -62,6 +65,7 @@ const RegStudents = () => {
       nombres,
       apellidos,
       id_Carreras,
+      tutorId,
       tema_proyecto: tema,
       fecha: fechaTema
     };
@@ -79,8 +83,15 @@ const RegStudents = () => {
     .then(data => {
       if (data.error) {
         console.error('Error al registrar al estudiante:', data.error);
+        errorAlert('No se pudo registrar al estudiante!');
       } else {
-        console.log('Registro exitoso:', data);
+        console.log('Registro exitoso:', data); 
+        successAlert('¡El estudiante ha sido registrado exitosamente!');
+        setNombres('');
+        setApellidos('');
+        setTema('');
+        setFechaTema('');
+        setIdCarrera('');
       }
     })
     .catch(error => console.error('Error al registrar al estudiante:', error));

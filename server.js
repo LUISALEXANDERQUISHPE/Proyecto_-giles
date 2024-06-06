@@ -78,7 +78,7 @@ app.post("/create", (req, res) => {
 app.post('/login', (req, res) => {
     const { correo_electronico, contrasenia } = req.body;
 
-    const checkQuery = 'SELECT nombres, apellidos, contrasenia FROM tutores WHERE correo_electronico = ?';
+    const checkQuery = 'SELECT id_tutores, nombres, apellidos, contrasenia FROM tutores WHERE correo_electronico = ?';
     db.query(checkQuery, [correo_electronico], (err, results) => {
         if (err) {
             console.error("Error al verificar el correo electrónico:", err);
@@ -103,8 +103,10 @@ app.post('/login', (req, res) => {
             res.status(200).send({
                 message: "Inicio de sesión exitoso",
                 nombre: user.nombres,
-                apellido: user.apellidos
+                apellido: user.apellidos,
+                id_tutor: user.id_tutores
             });
+            
         });
     });
 });
@@ -125,29 +127,60 @@ app.get('/carreras', (req, res) => {
 
 
 app.post("/insertStudent", (req, res) => {
-    const { nombres, apellidos, id_Carreras, tema_proyecto, fecha } = req.body;
-    
-    console.log("Datos recibidos en el servidor:", req.body); // Verifica los datos recibidos
+    const { nombres, apellidos, id_Carreras, tutorId, tema_proyecto, fecha } = req.body;
 
     const nombreUpper = nombres.toUpperCase();
     const apellidoUpper = apellidos.toUpperCase();
-    const id_carrera = parseInt(id_Carreras, 10); // Asegúrate de convertir a número
+    const id_carrera = parseInt(id_Carreras, 10);
+    const id_tutor = parseInt(tutorId, 10);
 
-    console.log("id_carrera (convertido a número):", id_carrera); // Verifica la conversión
-
-    const insertQuery = `
-      INSERT INTO estudiantes (nombres, apellidos, id_carrera,id_estado_estudiante)
-      VALUES (?, ?, ?, ?)
-    `;
-
-    db.query(insertQuery, [nombreUpper, apellidoUpper, id_carrera, 2], (errorInsert, resultsInsert) => {
-        if (errorInsert) {
-            console.error('Error al insertar en la base de datos:', errorInsert);
-            return res.status(500).send({ error: "Error al registrar al estudiante" });
+    // Comenzar transacción
+    db.beginTransaction((err) => {
+        if (err) {
+            console.error('Error al iniciar transacción:', err);
+            return res.status(500).send({ error: "Error técnico al iniciar la transacción" });
         }
-        res.send({ success: "Estudiante registrado exitosamente" });
+
+        const insertQuery = `
+            INSERT INTO estudiantes (nombres, apellidos, id_carrera, id_estado_estudiante, id_tutor)
+            VALUES (?, ?, ?, ?, ?)
+        `;
+        db.query(insertQuery, [nombreUpper, apellidoUpper, id_carrera, 2, id_tutor], (errorInsert, resultsInsert) => {
+            if (errorInsert) {
+                console.error('Error al insertar estudiante:', errorInsert);
+                return db.rollback(() => {
+                    res.status(500).send({ error: "Error al registrar al estudiante" });
+                });
+            }
+
+            const id_estudiante = resultsInsert.insertId;
+            const insertQuery2 = `
+                INSERT INTO tesis (tema, fecha_aprobacion, total_porcentaje_avance, id_estudiante)
+                VALUES (?, ?, ?, ?)
+            `;
+            db.query(insertQuery2, [tema_proyecto, fecha, 0, id_estudiante], (errorInsert2, resultsInsert2) => {
+                if (errorInsert2) {
+                    console.error('Error al insertar tesis:', errorInsert2);
+                    return db.rollback(() => {
+                        res.status(500).send({ error: "Error al registrar la tesis" });
+                    });
+                }
+
+                db.commit((errCommit) => {
+                    if (errCommit) {
+                        console.error('Error al confirmar transacción:', errCommit);
+                        return db.rollback(() => {
+                            res.status(500).send({ error: "Error técnico al confirmar la transacción" });
+                        });
+                    }
+
+                    res.status(200).send({ message: "Estudiante y tesis registrados con éxito" });
+                });
+            });
+        });
     });
 });
+
 
 
 app.listen(5000, () => {
