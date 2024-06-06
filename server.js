@@ -108,6 +108,47 @@ app.post('/login', (req, res) => {
         });
     });
 });
+app.get('/carreras', (req, res) => {
+    const query = 'SELECT * FROM carreras';  // Asume que tienes una tabla 'carreras' con los datos que necesitas
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("Error al obtener las carreras:", err);
+            return res.status(500).send({ error: "Problemas técnicos al recuperar las carreras." });
+        }
+        res.status(200).send({
+            message: "Carreras recuperadas exitosamente",
+            carreras: results  // Envía todos los resultados para ser usados en tu JSX
+        });
+    });
+});
+
+
+
+app.post("/insertStudent", (req, res) => {
+    const { nombres, apellidos, id_Carreras, tema_proyecto, fecha } = req.body;
+    
+    console.log("Datos recibidos en el servidor:", req.body); // Verifica los datos recibidos
+
+    const nombreUpper = nombres.toUpperCase();
+    const apellidoUpper = apellidos.toUpperCase();
+    const id_carrera = parseInt(id_Carreras, 10); // Asegúrate de convertir a número
+    console.log
+    console.log("id_carrera (convertido a número):", id_carrera); // Verifica la conversión
+
+    const insertQuery = `
+      INSERT INTO estudiantes (nombres, apellidos, id_carrera,id_estado_estudiante)
+      VALUES (?, ?, ?, ?)
+    `;
+
+    db.query(insertQuery, [nombreUpper, apellidoUpper, id_carrera, 2], (errorInsert, resultsInsert) => {
+        if (errorInsert) {
+            console.error('Error al insertar en la base de datos:', errorInsert);
+            return res.status(500).send({ error: "Error al registrar al estudiante" });
+        }
+        res.send({ success: "Estudiante registrado exitosamente" });
+    });
+});
+
 
 app.listen(5000, () => {
     console.log("Server is running on port 5000");

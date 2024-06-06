@@ -25,7 +25,7 @@ const NavMenu = ({ handleLogout }) => {
         <div className={`menu-item ${location.pathname === '/register-student' ? 'active' : ''}`}>
           <Link to="/register-student">
             <MdSchool className='icon1'/>
-            <span>Registro de estudiante</span>
+            <span>Registro de <br />estudiante</span>
           </Link>
         </div>
         <div className={`menu-item ${location.pathname === '/Student' ? 'active' : ''}`}>
