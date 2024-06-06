@@ -1,0 +1,87 @@
+.profile-header {
+    justify-content: center;
+    align-items: center;
+    height: 80px;
+    margin: auto;
+    margin-right: 23vh;
+}
+.subtitle {
+flex-grow: 1;
+flex-basis: 200;
+color: #fff;
+padding-left: 45px;
+padding-top: 25px;
+font-size: 25px;
+letter-spacing: 1.3px;
+}
+.container-Header {
+font-family: 'Liberation Serif', serif;
+display: flex;
+width: 100%;
+height: 75px;
+background: #7C121F;
+margin: auto;
+box-shadow: 0px 10px 0px 0px #420205;
+}
+.profile-container {
+    background: #fff;
+flex-direction: column;
+width: 100%;
+height: 100%;
+}
+
+________________________________-
+
+.flexi{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top:10% ;
+}
+.flexi{
+    margin: auto;
+    margin-left: 21%;
+    margin-top:4% ;
+}
+.position-Review {
+    display: flex;
+    flex: 1;
+  }
+  .position-Review{
+    margin-bottom: 20px; 
+  }
+.Carrera{
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: 600;
+    font-size: 21px;
+    margin-left: 10%;
+    
+}
+.Nombre{
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: 600;
+    font-size: 21px;
+    margin-left: 5%;
+}
+.tema{
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: 600;
+    font-size: 21px;
+    margin-left: 13%;
+}
+.info-item {
+    padding: 10px; /* Ajusta el padding para dar más espacio alrededor de los elementos */
+    width: 50%; /* Controla el ancho del contenedor */
+    margin: auto; /* Centra el contenedor en la página */
+   
+}
+label{
+    font-size: 18px;
+    letter-spacing:1.3px ;
+    font-weight: 400;
+}
+.table{
+   
+    margin-right: 20%;
+    border: 2px solid #333;
+}
