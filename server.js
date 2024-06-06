@@ -132,7 +132,7 @@ app.post("/insertStudent", (req, res) => {
     const nombreUpper = nombres.toUpperCase();
     const apellidoUpper = apellidos.toUpperCase();
     const id_carrera = parseInt(id_Carreras, 10); // Asegúrate de convertir a número
-    console.log
+
     console.log("id_carrera (convertido a número):", id_carrera); // Verifica la conversión
 
     const insertQuery = `
