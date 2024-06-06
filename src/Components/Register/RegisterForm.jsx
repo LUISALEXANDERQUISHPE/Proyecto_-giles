@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { FaEyeSlash, FaEye } from "react-icons/fa";
 import { RiVipCrownFill } from "react-icons/ri";
 import images from '../Assets/img/images';
-import '../Register/registerForm.css'; 
+import '../Register/registerForm.css';
 
 const RegistrationForm = () => {
     const [nombre, setNombre] = useState('');
@@ -29,6 +29,7 @@ const RegistrationForm = () => {
         const regex = /^[a-zA-Z\s]*$/; // Solo permite letras y espacios en blanco
         if (regex.test(value)) {
             setNombre(value);
+            setError('');
         } else {
             setError('El nombre solo puede contener letras y espacios');
         }
@@ -39,6 +40,7 @@ const RegistrationForm = () => {
         const regex = /^[a-zA-Z\s]*$/; // Solo permite letras y espacios en blanco
         if (regex.test(value)) {
             setApellido(value);
+            setError('');
         } else {
             setError('El apellido solo puede contener letras y espacios');
         }
@@ -52,7 +54,7 @@ const RegistrationForm = () => {
     const handleCorreoElectronicoBlur = () => {
         if (!correoElectronico.endsWith('@uta.edu.ec')) {
             setError('El correo debe terminar en @uta.edu.ec');
-        }else{
+        } else {
             setError('');
         }
     };
@@ -65,9 +67,9 @@ const RegistrationForm = () => {
         setShowConfirmPassword(!showConfirmPassword);
     };
 
-    const handleSubmit = async (event) => {        
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        if(!correoElectronico.endsWith('@uta.edu.ec')){
+        if (!correoElectronico.endsWith('@uta.edu.ec')) {
             setError('El correo debe ser unicamente institucional');
             return;
         }
@@ -89,14 +91,13 @@ const RegistrationForm = () => {
                     contrasenia: password
                 }),
             });
-    
+
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
             }
-            setError('Usuario registrado con éxito.');
-            
-    
+            setSuccessMessage('Usuario registrado con éxito.');
+
             const data = await response.json();
             setSuccessMessage(data.message);
             // Limpiar los campos del formulario si es necesario
@@ -116,18 +117,17 @@ const RegistrationForm = () => {
             <div className='conta'>
                 <div className="registration-image-wrapper">
                     <div className='imgUta'>
-                    <img src={images.img1} alt="Descripción de la imagen" />
+                        <img src={images.img1} alt="Descripción de la imagen" />
                     </div>
                 </div>
             </div>
-         
 
             <div className='registration-wrapper'>
                 <div className='registration-form-wrapper'>
                     <form onSubmit={handleSubmit}>
                         <div className='registration-image-wrapper1'>
                             <div className='img-fisei'>
-                            <img src={images.img3} alt="Descripción de la imagen" />
+                                <img src={images.img3} alt="Descripción de la imagen" />
                             </div>
                         </div>
 
