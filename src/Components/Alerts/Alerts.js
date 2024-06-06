@@ -6,7 +6,6 @@ export const successAlert = (message) => {
     Swal.fire({
         title: message,
         icon: 'success',
-        iconColor: '#7C121F',
         background: '#fff',
         showConfirmButton: false,
         backdrop: true,
