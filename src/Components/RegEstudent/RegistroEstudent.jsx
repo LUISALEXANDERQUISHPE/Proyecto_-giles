@@ -129,15 +129,15 @@ const RegStudents = () => {
           <label htmlFor="fecha_tema">FECHA DE APROBACIÓN DE TEMA</label>
           <input type="date" id="fecha_tema" value={fechaTema} onChange={handleFechaTemaChange} required />
         </div>
-      </form>
-      <div className='position-btn'>
+        <div className='position-btn'>
           <button type="submit">
             <span className="transition"></span>
             <span className="gradient"></span>
             <span className="label">REGISTRAR</span>
           </button>
         </div>
-
+      </form>
+      
     </div>
   );
 }
