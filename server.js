@@ -181,6 +181,19 @@ app.post("/insertStudent", (req, res) => {
     });
 });
 
+app.get('/getestudiantes', (req, res) => {
+    const query = 'SELECT * FROM estudiantes';  // Asume que tienes una tabla 'estudiantes' con los datos que necesitas
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("Error al obtener los estudiantes:", err);
+            return res.status(500).send({ error: "Problemas técnicos al recuperar los estudiantes." });
+        }
+        res.status(200).send({
+            message: "Estudiantes recuperados exitosamente",
+            students: results  // Envía todos los resultados para ser usados en tu JSX
+        });
+    });
+});
 
 
 app.listen(5000, () => {
