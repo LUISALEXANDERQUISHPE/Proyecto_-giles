@@ -180,9 +180,21 @@ app.post("/insertStudent", (req, res) => {
         });
     });
 });
-
 app.get('/getestudiantes', (req, res) => {
-    const query = 'SELECT * FROM estudiantes';  // Asume que tienes una tabla 'estudiantes' con los datos que necesitas
+    const query = `
+        SELECT 
+            e.id_estudiante, 
+            e.nombres, 
+            e.apellidos, 
+            c.nombre_carrera, 
+            ee.nombre_estado, 
+            t.total_porcentaje_avance 
+        FROM estudiantes e
+        JOIN carreras c ON e.id_carrera = c.id_Carreras
+        JOIN estados_estudiantes ee ON e.id_estado_estudiante = ee.id_Estados_estudiantes
+        LEFT JOIN tesis t ON e.id_estudiante = t.id_estudiante
+    `;
+
     db.query(query, (err, results) => {
         if (err) {
             console.error("Error al obtener los estudiantes:", err);
@@ -190,7 +202,37 @@ app.get('/getestudiantes', (req, res) => {
         }
         res.status(200).send({
             message: "Estudiantes recuperados exitosamente",
-            students: results  // Envía todos los resultados para ser usados en tu JSX
+            students: results
+        });
+    });
+});
+
+
+
+app.get('/getcarreras', (req, res) => {
+    const query = 'SELECT * FROM carreras';
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("Error al obtener las carreras:", err);
+            return res.status(500).send({ error: "Problemas técnicos al recuperar las carreras." });
+        }
+        res.status(200).send({
+            message: "Carreras recuperadas exitosamente",
+            carreras: results
+        });
+    });
+});
+
+app.get('/getestados', (req, res) => {
+    const query = 'SELECT * FROM estados_estudiantes';
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("Error al obtener los estados:", err);
+            return res.status(500).send({ error: "Problemas técnicos al recuperar los estados." });
+        }
+        res.status(200).send({
+            message: "Estados recuperados exitosamente",
+            estados: results
         });
     });
 });
