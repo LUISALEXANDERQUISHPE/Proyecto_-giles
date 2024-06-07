@@ -182,6 +182,12 @@ app.post("/insertStudent", (req, res) => {
     });
 });
 app.get('/getestudiantes', (req, res) => {
+    const tutorId = req.query.tutorId;
+
+    if (!tutorId) {
+        return res.status(400).send({ error: "ID de tutor no proporcionado" });
+    }
+
     const query = `
         SELECT 
             e.id_estudiante, 
@@ -194,9 +200,10 @@ app.get('/getestudiantes', (req, res) => {
         JOIN carreras c ON e.id_carrera = c.id_Carreras
         JOIN estados_estudiantes ee ON e.id_estado_estudiante = ee.id_Estados_estudiantes
         LEFT JOIN tesis t ON e.id_estudiante = t.id_estudiante
+        WHERE e.id_tutor = ?
     `;
 
-    db.query(query, (err, results) => {
+    db.query(query, [tutorId], (err, results) => {
         if (err) {
             console.error("Error al obtener los estudiantes:", err);
             return res.status(500).send({ error: "Problemas técnicos al recuperar los estudiantes." });
@@ -207,6 +214,7 @@ app.get('/getestudiantes', (req, res) => {
         });
     });
 });
+
 
 
 
@@ -318,3 +326,10 @@ app.get('/informes/:idTesis', (req, res) => {
 app.listen(5000, () => {
     console.log("Server is running on port 5000");
 });
+
+
+
+
+
+
+
