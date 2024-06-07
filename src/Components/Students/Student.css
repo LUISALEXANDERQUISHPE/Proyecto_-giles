@@ -1,5 +1,4 @@
 .profile-container {
-  padding: 20px;
   font-family: Arial, sans-serif;
   text-align: center; /* Center content */
 }
@@ -8,7 +7,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 70px;
+  margin-bottom: 20px;
   background-color: #800000; /* UTA color */
   padding: 10px;
 }
