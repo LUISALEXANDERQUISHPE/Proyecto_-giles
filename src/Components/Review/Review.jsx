@@ -8,7 +8,7 @@ const Review = () => {
     const [reports, setReports] = useState([]); // Estado para los informes
     const [currentPage, setCurrentPage] = useState(1); // Estado para la paginación
     const [itemsPerPage, setItemsPerPage] = useState(6); // Estado para el número de elementos por página
-    const estudianteId = 13; // ID del estudiante, puedes cambiarlo según tu lógica
+    const estudianteId = 1; // ID del estudiante, puedes cambiarlo según tu lógica
 
     useEffect(() => {
         // Fetch para obtener los detalles del estudiante
