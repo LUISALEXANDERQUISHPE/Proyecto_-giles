@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import images from '../Assets/img/images';
 import './Student.css';
-import { successAlert, errorAlert } from '../Alerts/Alerts';
 
 const RegStudents = () => {
   const [students, setStudents] = useState([]);
@@ -16,17 +15,21 @@ const RegStudents = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
+  const tutorId = localStorage.getItem('userId');
+
   useEffect(() => {
-    fetch('/getestudiantes')
-      .then(response => response.json())
-      .then(data => {
-        if (data.students) {
-          setStudents(data.students);
-        } else {
-          console.error("No se recibieron datos de estudiantes");
-        }
-      })
-      .catch(error => console.error('Error al cargar los estudiantes:', error));
+    if (tutorId) {
+      fetch(`/getestudiantes?tutorId=${tutorId}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.students) {
+            setStudents(data.students);
+          } else {
+            console.error("No se recibieron datos de estudiantes");
+          }
+        })
+        .catch(error => console.error('Error al cargar los estudiantes:', error));
+    }
 
     fetch('/getcarreras')
       .then(response => response.json())
@@ -49,11 +52,26 @@ const RegStudents = () => {
         }
       })
       .catch(error => console.error('Error al cargar los estados:', error));
-  }, []);
+  }, [tutorId]);
+
+  const handleNombreChange = (e) => {
+    const regex = /^[A-Za-z\s]{0,100}$/;
+    if (regex.test(e.target.value)) {
+      setFilterNombre(e.target.value);
+    }
+  };
+
+  const handlePorcentajeChange = (e) => {
+    const value = e.target.value;
+    if (value === '' || (Number(value) >= 0 && Number(value) <= 100)) {
+      setFilterPorcentaje(value);
+    }
+  };
 
   const filteredStudents = students.filter(student => {
+    const fullName = `${student.nombres} ${student.apellidos}`.toLowerCase();
     return (
-      student.nombres.toLowerCase().includes(filterNombre.toLowerCase()) &&
+      fullName.includes(filterNombre.toLowerCase()) &&
       (filterCarrera === '' || student.nombre_carrera === filterCarrera) &&
       (filterPorcentaje === '' || student.total_porcentaje_avance.toString().includes(filterPorcentaje)) &&
       (filterEstado === '' || student.nombre_estado === filterEstado)
@@ -88,7 +106,7 @@ const RegStudents = () => {
       <div className="filter-section">
         <label>
           Nombre
-          <input type="text" value={filterNombre} onChange={(e) => setFilterNombre(e.target.value)} />
+          <input type="text" value={filterNombre} onChange={handleNombreChange} placeholder="Solo letras, máx 100 caracteres" />
         </label>
         <label>
           Carrera
@@ -101,7 +119,7 @@ const RegStudents = () => {
         </label>
         <label>
           Porcentaje
-          <input type="number" value={filterPorcentaje} onChange={(e) => setFilterPorcentaje(e.target.value)} />
+          <input type="number" value={filterPorcentaje} onChange={handlePorcentajeChange} min="0" max="100" placeholder="0-100" />
         </label>
         <label>
           Estado
