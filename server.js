@@ -324,6 +324,19 @@ app.get('/informes/:idTesis', (req, res) => {
     });
 });
 
+app.put('/updateestado/:id', (req, res) => {
+    const { id } = req.params;
+    const { nuevoEstado } = req.body;
+
+    const query = 'UPDATE estudiantes SET id_estado_estudiante = ? WHERE id_estudiante = ?';
+    db.query(query, [nuevoEstado, id], (err, results) => {
+        if (err) {
+            console.error("Error al actualizar el estado:", err);
+            return res.status(500).send({ error: "Problemas técnicos al actualizar el estado." });
+        }
+        res.status(200).send({ message: "Estado actualizado exitosamente" });
+    });
+});
 
 
 app.listen(5000, () => {

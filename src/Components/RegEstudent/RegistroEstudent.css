@@ -54,12 +54,12 @@ form {
   border-radius: 7px;
 }
 
-label {
+.label-reg {
   font-family: 'Liberation Serif', serif;
   font-size: 18px;
   font-weight: 200;
   display: block;
-  padding-left: 10px;
+  text-align: left;
 }
 
 input {
