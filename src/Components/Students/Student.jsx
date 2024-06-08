@@ -151,9 +151,12 @@ const RegStudents = () => {
               <td>{student.nombre_carrera}</td>
               <td>{student.total_porcentaje_avance}%</td>
               <td>{student.nombre_estado}</td>
-              <td><Link to="/Review">
-            <span>Review</span>
-          </Link></td>
+              <td>
+                <Link to={`/review/${student.id_estudiante}`}>
+                  <span>Review</span>
+                </Link>
+              </td>
+
             </tr>
           ))}
         </tbody>
