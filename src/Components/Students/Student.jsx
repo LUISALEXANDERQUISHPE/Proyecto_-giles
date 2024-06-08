@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import images from '../Assets/img/images';
 import './Student.css';
-import { successAlert, errorAlert } from '../Alerts/Alerts';
 import { Link } from 'react-router-dom';
 
 const RegStudents = () => {
@@ -68,6 +67,10 @@ const RegStudents = () => {
     if (value === '' || (Number(value) >= 0 && Number(value) <= 100)) {
       setFilterPorcentaje(value);
     }
+  };
+
+  const capitalizeWords = (str) => {
+    return str.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
   };
 
   const filteredStudents = students.filter(student => {
@@ -147,16 +150,15 @@ const RegStudents = () => {
         <tbody>
           {currentStudents.map(student => (
             <tr key={student.id_estudiante}>
-              <td>{student.nombres} {student.apellidos}</td>
-              <td>{student.nombre_carrera}</td>
+              <td>{capitalizeWords(`${student.nombres} ${student.apellidos}`)}</td>
+              <td>{capitalizeWords(student.nombre_carrera)}</td>
               <td>{student.total_porcentaje_avance}%</td>
-              <td>{student.nombre_estado}</td>
+              <td>{capitalizeWords(student.nombre_estado)}</td>
               <td>
                 <Link to={`/review/${student.id_estudiante}`}>
                   <span>Review</span>
                 </Link>
               </td>
-
             </tr>
           ))}
         </tbody>
