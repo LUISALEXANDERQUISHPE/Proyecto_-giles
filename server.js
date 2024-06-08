@@ -211,8 +211,11 @@ app.get('/getestudiantes', (req, res) => {
         res.status(200).send({
             message: "Estudiantes recuperados exitosamente",
             students: results
+
+            
         });
     });
+    
 });
 
 
