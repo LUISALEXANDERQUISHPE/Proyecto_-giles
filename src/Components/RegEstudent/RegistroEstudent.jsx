@@ -111,17 +111,17 @@ const RegStudents = () => {
       <form onSubmit={handleSubmit}>
         <div className='flex'>
           <div className="form_input"> 
-            <label htmlFor="nombre">NOMBRES</label>
+            <h3 className='label-reg ' htmlFor="nombre">NOMBRES</h3>
             <input type="text" placeholder="Adeline Sahra" id="nombre" name='nombre' required value={nombres} onChange={handleNombreChange} />
           </div>
           <div className="form_input"> 
-            <label htmlFor="apellido">APELLIDOS</label>
+            <h3 className='label-reg ' htmlFor="apellido">APELLIDOS</h3>
             <input type="text" placeholder="Perez Santillan" id="apellido" name='apellido' required value={apellidos} onChange={handleApellidosChange}/>
           </div>
         </div>
         <div className='flex'>
           <div className="form_input"> 
-            <label htmlFor="Carrera">CARRERA</label>
+            <h3 className='label-reg ' htmlFor="Carrera">CARRERA</h3>
             <select id="id_Carreras" required value={id_Carreras} onChange={handleCarreraChange}>
               <option value="" disabled>Seleccione una carrera</option>
               {carreras.map((carrera) => (
@@ -132,12 +132,12 @@ const RegStudents = () => {
             </select>
           </div>
           <div className="form_input"> 
-            <label htmlFor="tema">TEMA DE PROYECTO</label>
-            <input type="text" placeholder="Tema del proyecto" id="tema" value={tema} onChange={handleTemaChange} required/>
+            <h3 className='label-reg '  htmlFor="tema">TEMA DE PROYECTO</h3>
+            <input type="text" placeholder=" Margen de tema" id="tema" value={tema} onChange={handleTemaChange} required/>
           </div>
         </div>
         <div className="form_input"> 
-          <label htmlFor="fecha_tema">FECHA DE APROBACIÓN DE TEMA</label>
+          <h3 className='label-reg ' htmlFor="fecha_tema">FECHA DE APROBACIÓN DE TEMA</h3>
           <input type="date" id="fecha_tema" value={fechaTema} onChange={handleFechaTemaChange} required />
         </div>
         <div className='position-btn'>
