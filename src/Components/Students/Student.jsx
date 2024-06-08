@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import images from '../Assets/img/images';
 import './Student.css';
+import { successAlert, errorAlert } from '../Alerts/Alerts';
+import { Link } from 'react-router-dom';
 
 const RegStudents = () => {
   const [students, setStudents] = useState([]);
@@ -13,7 +15,7 @@ const RegStudents = () => {
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 7;
 
   const tutorId = localStorage.getItem('userId');
 
@@ -149,7 +151,9 @@ const RegStudents = () => {
               <td>{student.nombre_carrera}</td>
               <td>{student.total_porcentaje_avance}%</td>
               <td>{student.nombre_estado}</td>
-              <td><a href="#">Revisar</a></td>
+              <td><Link to="/Review">
+            <span>Review</span>
+          </Link></td>
             </tr>
           ))}
         </tbody>

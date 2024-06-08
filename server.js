@@ -29,7 +29,7 @@ app.post("/create", (req, res) => {
     const nombreUpper = nombre.toUpperCase();
     const apellidoUpper = apellido.toUpperCase();
 
-    const checkQuery = 'SELECT COUNT(*) AS count FROM tutores WHERE nombres = ? AND apellidos = ?';
+    const checkQuery = 'SELECT  COUNT(*) AS count FROM tutores WHERE nombres = ? AND apellidos = ?';
     db.query(checkQuery, [nombreUpper, apellidoUpper], (err, results) => {
         if (err) {
             console.error('Error al verificar el usuario:', err);
@@ -129,8 +129,9 @@ app.get('/carreras', (req, res) => {
 app.post("/insertStudent", (req, res) => {
     const { nombres, apellidos, id_Carreras, tutorId, tema_proyecto, fecha } = req.body;
 
-    const nombreUpper = nombres.toUpperCase();
-    const apellidoUpper = apellidos.toUpperCase();
+    const nombreLower = nombres.toLowerCase();
+    const apellidoLower = apellidos.toLowerCase();
+    const tema_proyectoLower= tema_proyecto.toLowerCase();
     const id_carrera = parseInt(id_Carreras, 10);
     const id_tutor = parseInt(tutorId, 10);
 
@@ -145,7 +146,7 @@ app.post("/insertStudent", (req, res) => {
             INSERT INTO estudiantes (nombres, apellidos, id_carrera, id_estado_estudiante, id_tutor)
             VALUES (?, ?, ?, ?, ?)
         `;
-        db.query(insertQuery, [nombreUpper, apellidoUpper, id_carrera, 2, id_tutor], (errorInsert, resultsInsert) => {
+        db.query(insertQuery, [nombreLower, apellidoLower, id_carrera, 2, id_tutor], (errorInsert, resultsInsert) => {
             if (errorInsert) {
                 console.error('Error al insertar estudiante:', errorInsert);
                 return db.rollback(() => {
@@ -158,7 +159,7 @@ app.post("/insertStudent", (req, res) => {
                 INSERT INTO tesis (tema, fecha_aprobacion, total_porcentaje_avance, id_estudiante)
                 VALUES (?, ?, ?, ?)
             `;
-            db.query(insertQuery2, [tema_proyecto, fecha, 0, id_estudiante], (errorInsert2, resultsInsert2) => {
+            db.query(insertQuery2, [tema_proyectoLower, fecha, 0, id_estudiante], (errorInsert2, resultsInsert2) => {
                 if (errorInsert2) {
                     console.error('Error al insertar tesis:', errorInsert2);
                     return db.rollback(() => {
@@ -242,6 +243,81 @@ app.get('/getestados', (req, res) => {
             message: "Estados recuperados exitosamente",
             estados: results
         });
+    });
+});
+
+const capitalizeFirstLetter = (string) => {
+    return string.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  };
+
+  const capitalizeFirstLetterOnly = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  };
+
+app.get('/estudiante/:id', (req, res) => {
+    const estudianteId = req.params.id;
+    const studentQuery = `
+        SELECT 
+            e.id_estudiante,
+            e.nombres,
+            e.apellidos,
+            c.nombre_carrera,
+            ee.nombre_estado,
+            t.tema,
+            t.fecha_aprobacion,
+            t.id_tesis
+        FROM estudiantes e
+        INNER JOIN carreras c ON e.id_carrera = c.id_Carreras
+        INNER JOIN estados_estudiantes ee ON e.id_estado_estudiante = ee.id_estados_estudiantes
+        LEFT JOIN tesis t ON e.id_estudiante = t.id_estudiante
+        WHERE e.id_estudiante = ?
+    `;
+    console.log("Ejecutando consulta:", studentQuery);
+    console.log("Con parámetros:", estudianteId);
+
+    db.query(studentQuery, [estudianteId], (err, results) => {
+        if (err) {
+            console.error("Error al obtener los detalles del estudiante:", err);
+            return res.status(500).send({ error: "Problemas técnicos al recuperar los detalles del estudiante." });
+        }
+        if (results.length > 0) {
+            const result = results[0];
+            if (result.fecha_aprobacion) {
+                // Formatear la fecha en JavaScript
+                const formattedDate = new Date(result.fecha_aprobacion).toISOString().slice(0, 10).split('-').reverse().join('-');
+                result.fecha_aprobacion = formattedDate;
+            }
+            // Capitalizar nombres y apellidos
+            result.nombres = capitalizeFirstLetter(result.nombres);
+            result.apellidos = capitalizeFirstLetter(result.apellidos);
+            result.tema = capitalizeFirstLetterOnly(result.tema);
+
+            res.status(200).send(result);
+        } else {
+            res.status(404).send({ message: "Estudiante no encontrado." });
+        }
+    });
+});
+
+app.get('/informes/:idTesis', (req, res) => {
+    const idTesis = req.params.idTesis;
+    const reportsQuery = `
+        SELECT 
+            i.nombre_informe,
+            DATE_FORMAT(i.fecha_informe, '%d-%m-%Y') AS fecha_informe,
+            i.porcentaje_avance
+        FROM informes i
+        WHERE i.id_tesis = ?
+    `;
+    console.log("Ejecutando consulta:", reportsQuery);
+    console.log("Con parámetros:", idTesis);
+
+    db.query(reportsQuery, [idTesis], (err, results) => {
+        if (err) {
+            console.error("Error al obtener informes:", err);
+            return res.status(500).send({ error: "Problemas técnicos al recuperar informes." });
+        }
+        res.status(200).send(results);
     });
 });
 
