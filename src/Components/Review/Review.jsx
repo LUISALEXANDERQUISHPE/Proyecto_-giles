@@ -2,17 +2,18 @@ import React, { useState, useEffect } from 'react';
 import images from '../Assets/img/images';
 import './Review.css';
 import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 const Review = () => {
+    const { id } = useParams(); // Aquí 'id' debe coincidir con el nombre del parámetro en la ruta
     const [studentInfo, setStudentInfo] = useState(null); // Estado para los detalles del estudiante
     const [reports, setReports] = useState([]); // Estado para los informes
     const [currentPage, setCurrentPage] = useState(1); // Estado para la paginación
     const [itemsPerPage, setItemsPerPage] = useState(6); // Estado para el número de elementos por página
-    const estudianteId = 1; // ID del estudiante, puedes cambiarlo según tu lógica
 
     useEffect(() => {
         // Fetch para obtener los detalles del estudiante
-        fetch(`/estudiante/${estudianteId}`)
+        fetch(`/estudiante/${id}`)
             .then(response => response.json())
             .then(data => {
                 console.log("Datos recibidos del estudiante en el front:", data);
@@ -30,7 +31,7 @@ const Review = () => {
                 }
             })
             .catch(error => console.error('Error al cargar los detalles del estudiante:', error));
-    }, [estudianteId]); // El array vacío asegura que el efecto solo se ejecute una vez
+    }, [id]); // El array vacío asegura que el efecto solo se ejecute una vez
 
     const lastItemIndex = currentPage * itemsPerPage;
     const firstItemIndex = lastItemIndex - itemsPerPage;
@@ -88,10 +89,12 @@ const Review = () => {
                 )}
             <button class="Btn espaciado-btn">Nuevo
                 <svg class="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
-                 <path d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM112 256H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/>
-                 </svg>
+                <path d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM112 256H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/>
+                </svg>
             </button>
-            <h4>Informes</h4>
+            <div >
+            <h4>Lista de informes</h4>
+            </div>
             <table className="styled-table">
                 <thead>
                     <tr>

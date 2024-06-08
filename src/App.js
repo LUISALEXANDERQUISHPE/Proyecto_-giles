@@ -28,7 +28,7 @@ function App() {
                     <Route path="/profile" element={<UserProfile />} />
                     <Route path="/register-student" element={<RegEstudent />} /> {/* Agrega esta línea */}
                     <Route path="/student" element={<Students />} /> {/* Agrega esta línea */}
-                    <Route path="/Review" element={<Review />} /> {/* Agrega esta línea */}
+                    <Route path="/review/:id" element={<Review />} /> 
                 </Route>
             </Routes>
         </Router>
