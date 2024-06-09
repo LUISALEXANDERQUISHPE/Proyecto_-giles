@@ -150,3 +150,13 @@
   margin: 5px 0;
   box-sizing: border-box;
 }
+/* New styles for specific input fields */
+.input-field-fecha {
+  width: 30px; /* Adjust the width to make the fields less wide */
+  margin-right: 500px;
+}
+.input-field-porcentaje {
+  width: 30px; /* Adjust the width to make the fields less wide */
+  margin-right: 500px;
+
+}

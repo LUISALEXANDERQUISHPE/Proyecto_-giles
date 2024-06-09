@@ -1,53 +1,86 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import images from '../Assets/img/images';
 import './CreateInforme.css';
-import { Link, useLocation } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { alertaCrearActividad } from './AlertActividad'; // Importar la función de alerta
 
 const CreateInforme = () => {
+  const { id } = useParams(); // Obtener el ID del estudiante desde la URL
   const [studentData, setStudentData] = useState(null);
   const [porcentajeAvance, setPorcentajeAvance] = useState('');
   const [tituloInforme, setTituloInforme] = useState('');
   const [fechaInforme, setFechaInforme] = useState('');
+  const [inputsEnabled, setInputsEnabled] = useState(false); // Nuevo estado para habilitar/deshabilitar inputs
+  const [idTesis, setIdTesis] = useState(''); // Estado para almacenar el id de la tesis
 
   const location = useLocation();
   const studentInfo = location.state ? location.state.studentInfo : null;
 
-  useEffect(() => {
-    if (studentInfo) {
-      setStudentData(studentInfo);
-    } else {
-      fetchStudentData();
-    }
-  }, [studentInfo]);
-
-  const fetchStudentData = async () => {
+  const fetchStudentData = useCallback(async () => {
     try {
-      const response = await fetch('/estudiante/1'); // Reemplaza '1' con el ID del estudiante correcto
+      const response = await fetch(`/estudiante/${id}`);
       const data = await response.json();
       setStudentData(data);
+      setIdTesis(data.id_tesis); // Establecer el id de la tesis en el estado
     } catch (error) {
       console.error('Error al obtener los datos del estudiante:', error);
     }
-  };
+  }, [id]);
 
-  const handleGuardar = () => {
-    // Aquí puedes enviar el porcentaje de avance al servidor para guardarlo
-    console.log('Porcentaje de avance guardado:', porcentajeAvance);
+  useEffect(() => {
+    if (studentInfo) {
+      setStudentData(studentInfo);
+      setIdTesis(studentInfo.id_tesis);
+    } else {
+      fetchStudentData();
+    }
+  }, [studentInfo, fetchStudentData]);
+
+  const handleGuardar = async () => {
+    try {
+      const response = await fetch("/crearInforme", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          tituloInforme,
+          fechaInforme,
+          porcentajeAvance,
+          idTesis, // Pasar el id de la tesis
+        }),
+      });
+      const data = await response.json();
+      alert(data.message); // Mostrar el mensaje de éxito o error
+    } catch (error) {
+      console.error('Error al guardar el informe:', error);
+      alert("Error al guardar el informe en la base de datos");
+    }
   };
 
   const handleCrearActividad = (actividadData) => {
-    // Aquí puedes manejar la lógica para crear la actividad con los datos proporcionados
     console.log('Nueva actividad creada:', actividadData);
   };
 
   const handleCrearClick = () => {
-    // Validar que todos los campos del informe estén llenos
-    if (tituloInforme && fechaInforme && porcentajeAvance) {
-      // Mostrar la alerta para crear una nueva actividad
-      alertaCrearActividad(handleCrearActividad);
+    if (!inputsEnabled) {
+      // Si los inputs están deshabilitados, habilitarlos
+      setInputsEnabled(true);
     } else {
-      alert('Por favor complete todos los campos del informe antes de crear una actividad.');
+      // Si los inputs están habilitados, verificar y continuar
+      if (tituloInforme && fechaInforme && porcentajeAvance) {
+        handleGuardar(); // Guardar los datos
+        alertaCrearActividad(handleCrearActividad); // Mostrar la alerta para crear una nueva actividad
+      } else {
+        alert('Por favor complete todos los campos del informe antes de continuar.');
+      }
+    }
+  };
+
+  const handlePorcentajeChange = (e) => {
+    const value = e.target.value;
+    if (value === '' || (/^\d+$/.test(value) && value >= 0 && value <= 100)) {
+      setPorcentajeAvance(value);
     }
   };
 
@@ -68,9 +101,31 @@ const CreateInforme = () => {
             <p><strong>Estudiante:</strong> <span>{studentData ? `${studentData.nombres} ${studentData.apellidos}` : 'Cargando...'}</span></p>
             <p><strong>Carrera:</strong> <span>{studentData ? studentData.nombre_carrera : 'Cargando...'}</span></p>
             <p><strong>Fecha aprobada:</strong> <span>{studentData ? studentData.fecha_aprobacion : 'Cargando...'}</span></p>
-            <p><strong>Título de informe:</strong> <input type="text" className="input-field" value={tituloInforme} onChange={(e) => setTituloInforme(e.target.value)} /></p>
-            <p><strong>Fecha informe:</strong> <input type="date" className="input-field" value={fechaInforme} onChange={(e) => setFechaInforme(e.target.value)} /></p>
-            <p><strong>Porcentaje avance:</strong> <input type="text" value={porcentajeAvance} className="input-field" onChange={(e) => setPorcentajeAvance(e.target.value)} /></p>
+            <p><strong>Título de informe:</strong> 
+              <input type="text" 
+                     className="input-field" 
+                     value={tituloInforme} 
+                     onChange={(e) => setTituloInforme(e.target.value)} 
+                     disabled={!inputsEnabled} 
+              />
+            </p>
+            <p><strong>Fecha informe:</strong> 
+              <input type="date" 
+                     className="input-field input-field-fecha" 
+                     value={fechaInforme} 
+                     onChange={(e) => setFechaInforme(e.target.value)} 
+                     disabled={!inputsEnabled} 
+              />
+            </p>
+            <p><strong>Porcentaje avance:</strong> 
+              <input type="number" 
+                     className="input-field input-field-porcentaje" 
+                     value={porcentajeAvance} 
+                     onChange={handlePorcentajeChange} 
+                     min="0" max="100" 
+                     disabled={!inputsEnabled} 
+              />
+            </p>
           </div>
 
           <div className="activities">
@@ -87,7 +142,9 @@ const CreateInforme = () => {
               </tbody>
             </table>
             <div className="buttons">
-              <button onClick={handleCrearClick}>Crear</button>
+              <button onClick={handleCrearClick}>
+                {inputsEnabled ? 'Guardar y Continuar' : 'Crear'}
+              </button>
               <button>Modificar</button>
               <button>Eliminar</button>
             </div>
@@ -102,7 +159,7 @@ const CreateInforme = () => {
               <p>2. OBJETO DEL CONTRATO...</p>
             </div>
             <button>Descargar</button>
-            </div>
+          </div>
         </div>
       </div>
     </div>
