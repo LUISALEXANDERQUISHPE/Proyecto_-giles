@@ -214,8 +214,6 @@ app.get('/getestudiantes', (req, res) => {
         res.status(200).send({
             message: "Estudiantes recuperados exitosamente",
             students: results
-
-            
         });
     });
     
@@ -315,8 +313,8 @@ app.get('/informes/:idTesis', (req, res) => {
         FROM informes i
         WHERE i.id_tesis = ?
     `;
-    console.log("Ejecutando consulta:", reportsQuery);
-    console.log("Con parámetros:", idTesis);
+   // console.log("Ejecutando consulta:", reportsQuery);
+    //console.log("Con parámetros:", idTesis);
 
     db.query(reportsQuery, [idTesis], (err, results) => {
         if (err) {
@@ -350,17 +348,20 @@ app.post("/crearInforme", (req, res) => {
     }
 
     const insertQuery = 'INSERT INTO informes (nombre_informe, fecha_informe, porcentaje_avance, id_tesis) VALUES (?, ?, ?, ?)';
+
+    // Ejecutar la consulta de inserción
     db.query(insertQuery, [tituloInforme, fechaInforme, porcentajeAvance, idTesis], (error, results) => {
         if (error) {
             console.error('Error al insertar informe:', error);
             return res.status(500).send({ error: "Error al guardar el informe en la base de datos" });
         }
 
-        const idInforme = results.insertId; // Obtener el id_informe generado
+        // Recuperar el ID del último registro insertado
+        const idInforme = results.insertId;
 
-        // Ahora puedes usar idInforme donde lo necesites, por ejemplo, para crear actividades asociadas a este informe
+        // Enviar respuesta incluyendo el idInforme
+        res.status(200).send({ message: "Informe guardado exitosamente", idInforme: idInforme });
 
-        res.status(200).send({ message: "Informe guardado exitosamente", id_informe: idInforme });
     });
 });
 
@@ -371,6 +372,11 @@ app.post("/crearActividad", async (req, res) => {
         if (!id_informe || isNaN(id_informe)) {
             return res.status(400).json({ error: "El ID del informe proporcionado no es válido" });
         }
+
+        // Asegúrate de enviar success:true en la respuesta cuando la inserción sea exitosa
+        res.status(200).send({ success: true, message: "Actividad creada exitosamente" });
+        
+    });
 
         const insertQuery = 'INSERT INTO actividades (descripcion, fecha_actividad, id_informe) VALUES (?, ?, ?)';
         await new Promise((resolve, reject) => {
@@ -389,10 +395,12 @@ app.post("/crearActividad", async (req, res) => {
         console.error("Error al crear la actividad:", error);
         res.status(500).json({ error: "Error al crear la actividad" });
     }
+
 });
 
 
   
+
 
 app.listen(5000, () => {
     console.log("Server is running on port 5000");

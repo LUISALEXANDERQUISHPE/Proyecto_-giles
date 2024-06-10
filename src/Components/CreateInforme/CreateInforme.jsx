@@ -12,6 +12,7 @@ const CreateInforme = () => {
   const [fechaInforme, setFechaInforme] = useState('');
   const [inputsEnabled, setInputsEnabled] = useState(false); // Nuevo estado para habilitar/deshabilitar inputs
   const [idTesis, setIdTesis] = useState(''); // Estado para almacenar el id de la tesis
+  const [informeId, setInformeId] = useState(null);
 
   const location = useLocation();
   const studentInfo = location.state ? location.state.studentInfo : null;
@@ -36,6 +37,7 @@ const CreateInforme = () => {
     }
   }, [studentInfo, fetchStudentData]);
 
+
   const handleGuardar = async () => {
     try {
       const response = await fetch("/crearInforme", {
@@ -50,16 +52,16 @@ const CreateInforme = () => {
           idTesis,
         }),
       });
-      const data = await response.json();
-      alert(data.message);
   
-      // Después de guardar con éxito, crear la actividad
+      const data = await response.json();
+
       if (response.ok) {
-        // Aquí debes proporcionar el valor real de la descripción de la actividad
-        const descripcionDeLaActividad = 'Descripción de la actividad que desees';
-        
-        // Llama a la función para crear la actividad solo si el informe se guarda correctamente
-        await handleCrearActividad(data.id_informe, descripcionDeLaActividad); // Pasar el ID del informe y la descripción de la actividad
+        setInformeId(data.idInforme); // Guarda el ID del informe en el estado
+        alert(data.message);
+        return data.idInforme; // Retorna el idInforme para uso inmediato si es necesario
+      } else {
+        alert("Error al guardar el informe: " + data.error);
+
       }
     } catch (error) {
       console.error('Error al guardar el informe:', error);
@@ -67,6 +69,7 @@ const CreateInforme = () => {
     }
   };
   
+
 
   const handleCrearActividad = async (idInforme, descripcionActividad) => {
     try {
@@ -93,22 +96,28 @@ const CreateInforme = () => {
       console.error('Error al crear la actividad:', error);
       alert("Error al crear la actividad");
     }
+
   };
   
   
 
-  const handleCrearClick = () => {
+  const handleCrearClick = async () => {
     if (!inputsEnabled) {
-      setInputsEnabled(true);
+
+      setInputsEnabled(true); // Habilita los inputs si están deshabilitados
     } else {
       if (tituloInforme && fechaInforme && porcentajeAvance) {
-        handleGuardar();
-        alertaCrearActividad(); // Llamar solo a la función para mostrar la alerta
+        const idInforme = await handleGuardar(); // Asegúrate de esperar aquí
+        if (idInforme) {
+          alertaCrearActividad(idInforme, handleCrearActividad); // Pasa el ID a la función de alerta
+        }
+
       } else {
         alert('Por favor complete todos los campos del informe antes de continuar.');
       }
     }
   };
+  
 
   const handlePorcentajeChange = (e) => {
     const value = e.target.value;
