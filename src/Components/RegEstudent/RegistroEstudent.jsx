@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import images from '../Assets/img/images';
 import './RegistroEstudent.css';
-import { successAlert, errorAlert } from '../Alerts/Alerts'; 
-
+import { successAlert, errorAlert } from '../Alerts/Alerts';
 
 const RegStudents = () => {
   const [carreras, setCarreras] = useState([]);
+  const [cedula, setCedula] = useState('');
   const [nombres, setNombres] = useState('');
   const [apellidos, setApellidos] = useState('');
   const [tema, setTema] = useState('');
@@ -25,13 +25,23 @@ const RegStudents = () => {
       .catch(error => console.error('Error al cargar las carreras:', error));
   }, []);
 
+  const handleCedulaChange = (e) => {
+    const value = e.target.value;
+    const regex = /^[0-9]*$/; // Solo permite números
+    if (regex.test(value)) {
+      setCedula(value);
+    } else {
+      console.error('La cédula solo puede contener números');
+    }
+  };
+
   const handleNombreChange = (e) => {
     const value = e.target.value;
     const regex = /^[a-zA-Z\s]*$/; // Solo permite letras y espacios en blanco
     if (regex.test(value)) {
-        setNombres(value);
+      setNombres(value);
     } else {
-        console.error('El nombre solo puede contener letras y espacios');
+      console.error('El nombre solo puede contener letras y espacios');
     }
   };
 
@@ -39,9 +49,9 @@ const RegStudents = () => {
     const value = e.target.value;
     const regex = /^[a-zA-Z\s]*$/; // Solo permite letras y espacios en blanco
     if (regex.test(value)) {
-        setApellidos(value);
+      setApellidos(value);
     } else {
-        console.error('El apellido solo puede contener letras y espacios');
+      console.error('El apellido solo puede contener letras y espacios');
     }
   };
 
@@ -57,11 +67,13 @@ const RegStudents = () => {
     setIdCarrera(e.target.value);
     console.log("Carrera seleccionada:", e.target.value);
   };
+
   const tutorId = localStorage.getItem('userId');
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const studentData = {
+      cedula,
       nombres,
       apellidos,
       id_Carreras,
@@ -83,10 +95,11 @@ const RegStudents = () => {
     .then(data => {
       if (data.error) {
         console.error('Error al registrar al estudiante:', data.error);
-        errorAlert('No se pudo registrar al estudiante!');
+        errorAlert('No se pudo registrar al estudiante! Cedula ya existe');
       } else {
         console.log('Registro exitoso:', data); 
         successAlert('¡El estudiante ha sido registrado exitosamente!');
+        setCedula('');
         setNombres('');
         setApellidos('');
         setTema('');
@@ -111,17 +124,21 @@ const RegStudents = () => {
       <form onSubmit={handleSubmit}>
         <div className='flex'>
           <div className="form_input"> 
-            <h3 className='label-reg ' htmlFor="nombre">NOMBRES</h3>
-            <input type="text" placeholder="Adeline Sahra" id="nombre" name='nombre' required value={nombres} onChange={handleNombreChange} />
+            <h3 className='label-reg' htmlFor="cedula">CÉDULA</h3>
+            <input type="text" placeholder="1234567890" id="cedula" name='cedula' required value={cedula} onChange={handleCedulaChange} />
           </div>
           <div className="form_input"> 
-            <h3 className='label-reg ' htmlFor="apellido">APELLIDOS</h3>
-            <input type="text" placeholder="Perez Santillan" id="apellido" name='apellido' required value={apellidos} onChange={handleApellidosChange}/>
+            <h3 className='label-reg' htmlFor="nombre">NOMBRES</h3>
+            <input type="text" placeholder="Adeline Sahra" id="nombre" name='nombre' required value={nombres} onChange={handleNombreChange} />
           </div>
         </div>
         <div className='flex'>
           <div className="form_input"> 
-            <h3 className='label-reg ' htmlFor="Carrera">CARRERA</h3>
+            <h3 className='label-reg' htmlFor="apellido">APELLIDOS</h3>
+            <input type="text" placeholder="Perez Santillan" id="apellido" name='apellido' required value={apellidos} onChange={handleApellidosChange} />
+          </div>
+          <div className="form_input"> 
+            <h3 className='label-reg' htmlFor="Carrera">CARRERA</h3>
             <select id="id_Carreras" required value={id_Carreras} onChange={handleCarreraChange}>
               <option value="" disabled>Seleccione una carrera</option>
               {carreras.map((carrera) => (
@@ -131,14 +148,16 @@ const RegStudents = () => {
               ))}
             </select>
           </div>
-          <div className="form_input"> 
-            <h3 className='label-reg '  htmlFor="tema">TEMA DE PROYECTO</h3>
-            <input type="text" placeholder=" Margen de tema" id="tema" value={tema} onChange={handleTemaChange} required/>
-          </div>
         </div>
-        <div className="form_input"> 
-          <h3 className='label-reg ' htmlFor="fecha_tema">FECHA DE APROBACIÓN DE TEMA</h3>
-          <input type="date" id="fecha_tema" value={fechaTema} onChange={handleFechaTemaChange} required />
+        <div className='flex'>
+          <div className="form_input"> 
+            <h3 className='label-reg' htmlFor="tema">TEMA DE PROYECTO</h3>
+            <input type="text" placeholder="Margen de tema" id="tema" value={tema} onChange={handleTemaChange} required />
+          </div>
+          <div className="form_input"> 
+            <h3 className='label-reg' htmlFor="fecha_tema">FECHA DE APROBACIÓN DE TEMA</h3>
+            <input type="date" id="fecha_tema" value={fechaTema} onChange={handleFechaTemaChange} required />
+          </div>
         </div>
         <div className='position-btn'>
           <button type="submit">
