@@ -3,11 +3,12 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginForm from './Components/LoginForm/LoginForm';
 import RegistrationForm from './Components/Register/RegisterForm';
 import RequireAuth from './Components/RequireAuthentic/RequireAuth';
-import Layout from './Components/Layaout/Layout'; // Importa el layout
-import UserProfile from './Components/UserProfile/UserProfile'; // Importa el perfil de usuario
-import RegEstudent from './Components/RegEstudent/RegistroEstudent'; // Importa el registro de estudiantes
+import Layout from './Components/Layaout/Layout';
+import UserProfile from './Components/UserProfile/UserProfile';
+import RegEstudent from './Components/RegEstudent/RegistroEstudent';
 import Students from './Components/Students/Student';
-import Review from './Components/Review/Review'
+import Review from './Components/Review/Review';
+import CreateInforme from './Components/CreateInforme/CreateInforme'; // Importa el componente de CreateInforme
 
 function App() {
     useEffect(() => {
@@ -26,9 +27,10 @@ function App() {
                 <Route element={<RequireAuth><Layout /></RequireAuth>}>
                     <Route path="/menu" element={<UserProfile />} />
                     <Route path="/profile" element={<UserProfile />} />
-                    <Route path="/register-student" element={<RegEstudent />} /> {/* Agrega esta línea */}
-                    <Route path="/student" element={<Students />} /> {/* Agrega esta línea */}
-                    <Route path="/review/:id" element={<Review />} /> 
+                    <Route path="/register-student" element={<RegEstudent />} />
+                    <Route path="/student" element={<Students />} />
+                    <Route path="/review/:id" element={<Review />} />
+                    <Route path="/create-informe/:id" element={<CreateInforme />} /> {/* Nueva ruta para CreateInforme */}
                 </Route>
             </Routes>
         </Router>

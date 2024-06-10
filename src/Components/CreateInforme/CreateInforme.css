@@ -1,0 +1,162 @@
+/* Existing styles */
+.CreateInforme .header {
+  font-family: 'Liberation Serif', serif;
+  display: flex;
+  align-items: center;
+}
+
+.CreateInforme .nav-menu {
+  font-family: 'Liberation Serif', serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.CreateInforme .icon2 {
+  font-size: 3em;
+}
+
+.CreateInforme .icon1 {
+  font-size: 2.2em;
+}
+
+.CreateInforme .header {
+  font-size: 1.3em;
+  font-weight: bold;
+  color: #333;
+}
+
+.CreateInforme span {
+  font-size: 1.2em;
+}
+
+.CreateInforme .menu-item {
+  margin: 20px 0;
+}
+
+.CreateInforme .menu-item a {
+  color: #333;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  margin: auto;
+  margin-right: 5px;
+}
+
+.CreateInforme .menu-item a:hover {
+  background-color: #444;
+  color: #fff;
+  margin: auto;
+  margin-right: 5px;
+}
+
+.CreateInforme .menu-item.active a {
+  background-color: #555;
+  font-weight: bolder;
+  color: #fff;
+  text-decoration: none;
+  margin: auto;
+  margin-right: 5px;
+}
+
+.CreateInforme .menu-item svg {
+  margin-right: 10px;
+}
+
+.CreateInforme .footer {
+  font-family: 'Liberation Serif', serif;
+  margin: 125px 0px 0px 17px;
+}
+
+.CreateInforme .sidebar {
+  background-color: #fff;
+}
+
+/* New styles for central content */
+.central-content {
+  display: flex;
+  justify-content: space-between;
+  gap: 0px;
+  padding: 10px;
+  border-top: 2px solid #800000;
+  width: 100%;
+  height: 100vh; /* Set height to fill the viewport */
+  box-sizing: border-box;
+}
+
+.left-section, .right-section {
+  flex: 1;
+  padding: 20px;
+  background-color: #f9f9f9;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+.student-info, .activities, .report-preview {
+  margin-bottom: 20px;
+}
+
+.student-info p, .activities p {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.student-info p strong, .activities p strong {
+  width: 150px; /* Fixed width for labels */
+  text-align: left;
+}
+
+.student-info p input, .activities p input, .student-info p span, .activities p span {
+  flex: 1;
+  padding: 8px;
+  margin-left: 10px;
+  box-sizing: border-box;
+}
+
+.activities table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 10px;
+}
+
+.activities th, .activities td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.report-preview {
+  text-align: center;
+}
+
+.report-content {
+  border: 1px solid #ddd;
+  padding: 10px;
+  height: calc(100% - 260px); /* Adjusted height to fill the remaining space */
+  overflow-y: auto;
+}
+
+.input-field {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0;
+  box-sizing: border-box;
+}
+/* New styles for specific input fields */
+.input-field-fecha {
+  width: 30px; /* Adjust the width to make the fields less wide */
+  margin-right: 500px;
+}
+.input-field-porcentaje {
+  width: 30px; /* Adjust the width to make the fields less wide */
+  margin-right: 500px;
+
+}

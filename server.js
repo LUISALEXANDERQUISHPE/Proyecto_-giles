@@ -338,6 +338,41 @@ app.put('/updateestado/:id', (req, res) => {
     });
 });
 
+app.post("/crearInforme", (req, res) => {
+    const { tituloInforme, fechaInforme, porcentajeAvance, idTesis } = req.body;
+
+    // Verificar si idTesis es un valor válido
+    if (!idTesis || isNaN(idTesis)) {
+        return res.status(400).send({ error: "El ID de la tesis proporcionado no es válido" });
+    }
+
+
+    const insertQuery = 'INSERT INTO informes (nombre_informe, fecha_informe, porcentaje_avance, id_tesis) VALUES (?, ?, ?, ?)';
+    db.query(insertQuery, [tituloInforme, fechaInforme, porcentajeAvance, idTesis], (error, results) => {
+        if (error) {
+            console.error('Error al insertar informe:', error);
+            return res.status(500).send({ error: "Error al guardar el informe en la base de datos" });
+        }
+
+        res.status(200).send({ message: "Informe guardado exitosamente" });
+    });
+});
+
+app.post("/crearActividad", (req, res) => {
+    const { fechaActividad, detalle, idInforme } = req.body;
+
+    const insertQuery = 'INSERT INTO actividades (fecha_actividad, descripcion, id_informe) VALUES (?, ?, ?)';
+    db.query(insertQuery, [fechaActividad, detalle, idInforme], (error, results) => {
+        if (error) {
+            console.error('Error al insertar actividad:', error);
+            return res.status(500).send({ error: "Error al guardar la actividad en la base de datos" });
+        }
+
+        res.status(200).send({ message: "Actividad creada exitosamente" });
+    });
+});
+
+
 
 app.listen(5000, () => {
     console.log("Server is running on port 5000");
