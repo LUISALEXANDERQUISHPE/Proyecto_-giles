@@ -127,11 +127,12 @@ app.get('/carreras', (req, res) => {
 
 
 app.post("/insertStudent", (req, res) => {
-    const { nombres, apellidos, id_Carreras, tutorId, tema_proyecto, fecha } = req.body;
+    const { cedula, nombres, apellidos, id_Carreras, tutorId, tema_proyecto, fecha } = req.body;
 
+    const cedulaInt = parseInt(cedula, 10); // Asegúrate de que la cédula sea un número entero si es necesario
     const nombreLower = nombres.toLowerCase();
     const apellidoLower = apellidos.toLowerCase();
-    const tema_proyectoLower= tema_proyecto.toLowerCase();
+    const tema_proyectoLower = tema_proyecto.toLowerCase();
     const id_carrera = parseInt(id_Carreras, 10);
     const id_tutor = parseInt(tutorId, 10);
 
@@ -143,10 +144,10 @@ app.post("/insertStudent", (req, res) => {
         }
 
         const insertQuery = `
-            INSERT INTO estudiantes (nombres, apellidos, id_carrera, id_estado_estudiante, id_tutor)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO estudiantes (cedula, nombres, apellidos, id_carrera, id_estado_estudiante, id_tutor)
+            VALUES (?, ?, ?, ?, ?, ?)
         `;
-        db.query(insertQuery, [nombreLower, apellidoLower, id_carrera, 2, id_tutor], (errorInsert, resultsInsert) => {
+        db.query(insertQuery, [cedulaInt, nombreLower, apellidoLower, id_carrera, 2, id_tutor], (errorInsert, resultsInsert) => {
             if (errorInsert) {
                 console.error('Error al insertar estudiante:', errorInsert);
                 return db.rollback(() => {
@@ -181,6 +182,8 @@ app.post("/insertStudent", (req, res) => {
         });
     });
 });
+
+
 app.get('/getestudiantes', (req, res) => {
     const tutorId = req.query.tutorId;
 
@@ -346,7 +349,6 @@ app.post("/crearInforme", (req, res) => {
         return res.status(400).send({ error: "El ID de la tesis proporcionado no es válido" });
     }
 
-
     const insertQuery = 'INSERT INTO informes (nombre_informe, fecha_informe, porcentaje_avance, id_tesis) VALUES (?, ?, ?, ?)';
     db.query(insertQuery, [tituloInforme, fechaInforme, porcentajeAvance, idTesis], (error, results) => {
         if (error) {
@@ -354,25 +356,43 @@ app.post("/crearInforme", (req, res) => {
             return res.status(500).send({ error: "Error al guardar el informe en la base de datos" });
         }
 
-        res.status(200).send({ message: "Informe guardado exitosamente" });
+        const idInforme = results.insertId; // Obtener el id_informe generado
+
+        // Ahora puedes usar idInforme donde lo necesites, por ejemplo, para crear actividades asociadas a este informe
+
+        res.status(200).send({ message: "Informe guardado exitosamente", id_informe: idInforme });
     });
 });
 
-app.post("/crearActividad", (req, res) => {
-    const { fechaActividad, detalle, idInforme } = req.body;
+app.post("/crearActividad", async (req, res) => {
+    try {
+        const { descripcion, fecha_actividad, id_informe } = req.body;
 
-    const insertQuery = 'INSERT INTO actividades (fecha_actividad, descripcion, id_informe) VALUES (?, ?, ?)';
-    db.query(insertQuery, [fechaActividad, detalle, idInforme], (error, results) => {
-        if (error) {
-            console.error('Error al insertar actividad:', error);
-            return res.status(500).send({ error: "Error al guardar la actividad en la base de datos" });
+        if (!id_informe || isNaN(id_informe)) {
+            return res.status(400).json({ error: "El ID del informe proporcionado no es válido" });
         }
 
-        res.status(200).send({ message: "Actividad creada exitosamente" });
-    });
+        const insertQuery = 'INSERT INTO actividades (descripcion, fecha_actividad, id_informe) VALUES (?, ?, ?)';
+        await new Promise((resolve, reject) => {
+            db.query(insertQuery, [descripcion, fecha_actividad, id_informe], (error, results) => {
+                if (error) {
+                    console.error('Error al insertar actividad:', error);
+                    reject(error);
+                } else {
+                    resolve(results);
+                }
+            });
+        });
+
+        res.status(200).json({ message: "Actividad creada correctamente" });
+    } catch (error) {
+        console.error("Error al crear la actividad:", error);
+        res.status(500).json({ error: "Error al crear la actividad" });
+    }
 });
 
 
+  
 
 app.listen(5000, () => {
     console.log("Server is running on port 5000");
