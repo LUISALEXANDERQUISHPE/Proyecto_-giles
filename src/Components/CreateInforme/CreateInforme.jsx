@@ -54,26 +54,56 @@ const CreateInforme = () => {
       });
   
       const data = await response.json();
+
       if (response.ok) {
         setInformeId(data.idInforme); // Guarda el ID del informe en el estado
         alert(data.message);
         return data.idInforme; // Retorna el idInforme para uso inmediato si es necesario
       } else {
         alert("Error al guardar el informe: " + data.error);
+
       }
     } catch (error) {
       console.error('Error al guardar el informe:', error);
       alert("Error al guardar el informe en la base de datos");
     }
   };
+  
 
 
-  const handleCrearActividad = (actividadData) => {
-    console.log('Nueva actividad creada:', actividadData);
+  const handleCrearActividad = async (idInforme, descripcionActividad) => {
+    try {
+      const response = await fetch("/crearActividad", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          descripcion: descripcionActividad, // Descripción de la actividad
+          fecha_actividad: new Date().toISOString().split('T')[0], // Fecha actual en formato ISO
+          id_informe: idInforme, // ID del informe pasado como argumento
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Error al crear la actividad');
+      }
+  
+      const data = await response.json();
+      console.log('Nueva actividad creada:', data); // Mostrar la respuesta en la consola para ver si se creó la actividad correctamente
+      alert("Actividad creada correctamente");
+    } catch (error) {
+      console.error('Error al crear la actividad:', error);
+      alert("Error al crear la actividad");
+    }
+
   };
+  
+  
 
   const handleCrearClick = async () => {
     if (!inputsEnabled) {
+
       setInputsEnabled(true); // Habilita los inputs si están deshabilitados
     } else {
       if (tituloInforme && fechaInforme && porcentajeAvance) {
@@ -81,6 +111,7 @@ const CreateInforme = () => {
         if (idInforme) {
           alertaCrearActividad(idInforme, handleCrearActividad); // Pasa el ID a la función de alerta
         }
+
       } else {
         alert('Por favor complete todos los campos del informe antes de continuar.');
       }
@@ -166,6 +197,7 @@ const CreateInforme = () => {
           <div className="report-preview">
             <h4>Ejemplo de Asunto Técnico</h4>
             <div className="report-content">
+              <p>1. ANTECEDENTES...</p>
               <p>1. ANTECEDENTES...</p>
               <p>2. OBJETO DEL CONTRATO...</p>
             </div>

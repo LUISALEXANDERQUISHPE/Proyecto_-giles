@@ -1,7 +1,11 @@
 import Swal from 'sweetalert2';
 
+
 export const alertaCrearActividad = async (idInforme, handleCrearActividad) => {
     const { value: formValues } = await Swal.fire({
+
+
+
         title: 'Crear nueva actividad',
         html:
             '<p class="swal2-title">Fecha de actividad</p>' +
@@ -46,7 +50,7 @@ export const alertaCrearActividad = async (idInforme, handleCrearActividad) => {
             const data = await response.json();
             console.log(data); 
             
-            if (data.success) {
+            if (response.ok) {
                 // Si la creación de la actividad fue exitosa, mostrar un mensaje de éxito
                 Swal.fire({
                     icon: 'success',
@@ -54,7 +58,9 @@ export const alertaCrearActividad = async (idInforme, handleCrearActividad) => {
                     text: 'La actividad se ha creado correctamente.',
                     confirmButtonColor: '#1a202c'
                 });
+
             }  else {
+
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
@@ -65,7 +71,7 @@ export const alertaCrearActividad = async (idInforme, handleCrearActividad) => {
             }
             
         } catch (error) {
-            // Si hubo un error en la solicitud, mostrar un mensaje de error
+            // Si hubo un error en la solicitud, mostrar un mensaje de error específico
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
