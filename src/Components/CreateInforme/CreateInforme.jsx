@@ -12,6 +12,7 @@ const CreateInforme = () => {
   const [fechaInforme, setFechaInforme] = useState('');
   const [inputsEnabled, setInputsEnabled] = useState(false); // Nuevo estado para habilitar/deshabilitar inputs
   const [idTesis, setIdTesis] = useState(''); // Estado para almacenar el id de la tesis
+  const [informeId, setInformeId] = useState(null);
 
   const location = useLocation();
   const studentInfo = location.state ? location.state.studentInfo : null;
@@ -36,6 +37,7 @@ const CreateInforme = () => {
     }
   }, [studentInfo, fetchStudentData]);
 
+
   const handleGuardar = async () => {
     try {
       const response = await fetch("/crearInforme", {
@@ -47,35 +49,44 @@ const CreateInforme = () => {
           tituloInforme,
           fechaInforme,
           porcentajeAvance,
-          idTesis, // Pasar el id de la tesis
+          idTesis,
         }),
       });
+  
       const data = await response.json();
-      alert(data.message); // Mostrar el mensaje de éxito o error
+      if (response.ok) {
+        setInformeId(data.idInforme); // Guarda el ID del informe en el estado
+        alert(data.message);
+        return data.idInforme; // Retorna el idInforme para uso inmediato si es necesario
+      } else {
+        alert("Error al guardar el informe: " + data.error);
+      }
     } catch (error) {
       console.error('Error al guardar el informe:', error);
       alert("Error al guardar el informe en la base de datos");
     }
   };
 
+
   const handleCrearActividad = (actividadData) => {
     console.log('Nueva actividad creada:', actividadData);
   };
 
-  const handleCrearClick = () => {
+  const handleCrearClick = async () => {
     if (!inputsEnabled) {
-      // Si los inputs están deshabilitados, habilitarlos
-      setInputsEnabled(true);
+      setInputsEnabled(true); // Habilita los inputs si están deshabilitados
     } else {
-      // Si los inputs están habilitados, verificar y continuar
       if (tituloInforme && fechaInforme && porcentajeAvance) {
-        handleGuardar(); // Guardar los datos
-        alertaCrearActividad(handleCrearActividad); // Mostrar la alerta para crear una nueva actividad
+        const idInforme = await handleGuardar(); // Asegúrate de esperar aquí
+        if (idInforme) {
+          alertaCrearActividad(idInforme, handleCrearActividad); // Pasa el ID a la función de alerta
+        }
       } else {
         alert('Por favor complete todos los campos del informe antes de continuar.');
       }
     }
   };
+  
 
   const handlePorcentajeChange = (e) => {
     const value = e.target.value;

@@ -211,8 +211,6 @@ app.get('/getestudiantes', (req, res) => {
         res.status(200).send({
             message: "Estudiantes recuperados exitosamente",
             students: results
-
-            
         });
     });
     
@@ -312,8 +310,8 @@ app.get('/informes/:idTesis', (req, res) => {
         FROM informes i
         WHERE i.id_tesis = ?
     `;
-    console.log("Ejecutando consulta:", reportsQuery);
-    console.log("Con parámetros:", idTesis);
+   // console.log("Ejecutando consulta:", reportsQuery);
+    //console.log("Con parámetros:", idTesis);
 
     db.query(reportsQuery, [idTesis], (err, results) => {
         if (err) {
@@ -346,15 +344,20 @@ app.post("/crearInforme", (req, res) => {
         return res.status(400).send({ error: "El ID de la tesis proporcionado no es válido" });
     }
 
-
     const insertQuery = 'INSERT INTO informes (nombre_informe, fecha_informe, porcentaje_avance, id_tesis) VALUES (?, ?, ?, ?)';
+
+    // Ejecutar la consulta de inserción
     db.query(insertQuery, [tituloInforme, fechaInforme, porcentajeAvance, idTesis], (error, results) => {
         if (error) {
             console.error('Error al insertar informe:', error);
             return res.status(500).send({ error: "Error al guardar el informe en la base de datos" });
         }
 
-        res.status(200).send({ message: "Informe guardado exitosamente" });
+        // Recuperar el ID del último registro insertado
+        const idInforme = results.insertId;
+
+        // Enviar respuesta incluyendo el idInforme
+        res.status(200).send({ message: "Informe guardado exitosamente", idInforme: idInforme });
     });
 });
 
@@ -368,9 +371,12 @@ app.post("/crearActividad", (req, res) => {
             return res.status(500).send({ error: "Error al guardar la actividad en la base de datos" });
         }
 
-        res.status(200).send({ message: "Actividad creada exitosamente" });
+        // Asegúrate de enviar success:true en la respuesta cuando la inserción sea exitosa
+        res.status(200).send({ success: true, message: "Actividad creada exitosamente" });
+        
     });
 });
+
 
 
 
