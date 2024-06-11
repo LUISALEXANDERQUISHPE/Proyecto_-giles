@@ -436,18 +436,21 @@ app.put('/updateInforme', (req, res) => {
     });
 });
 
-app.get('/actividades', (req, res) => {
-    const {informeId}= req.body;
+app.get('/actividades/:idInforme', (req, res) => {
+    const idInforme = req.params.idInforme;
     const activitiesQuery = `
         SELECT 
             a.fecha_actividad,
             a.descripcion
         FROM actividades a
         WHERE a.id_informe = ?
-    `;// Descomenta las siguientes líneas para depurar la consulta y los parámetros
+    `;
+
+    // Descomenta las siguientes líneas para depurar la consulta y los parámetros
     // console.log("Ejecutando consulta:", activitiesQuery);
     // console.log("Con parámetros:", idInforme);
-    db.query(activitiesQuery, [informeId], (err, results) => {
+
+    db.query(activitiesQuery, [idInforme], (err, results) => {
         if (err) {
             console.error("Error al obtener actividades:", err);
             return res.status(500).send({ error: "Problemas técnicos al recuperar actividades." });

@@ -1,7 +1,7 @@
 import Swal from 'sweetalert2';
 
 
-export const alertaCrearActividad = async (idInforme) => {
+export const alertaCrearActividad = async (idInforme, fetchActividades) => {
     console.log("ID del informe recibido:", idInforme); 
     const { value: formValues } = await Swal.fire({
         title: 'Crear nueva actividad',
@@ -32,7 +32,6 @@ export const alertaCrearActividad = async (idInforme) => {
         }
     });
 
-
     if (formValues && formValues.fechaActividad && formValues.detalle) {
         console.log('Datos de la nueva actividad:', formValues);
         
@@ -55,10 +54,11 @@ export const alertaCrearActividad = async (idInforme) => {
                     title: 'Actividad creada',
                     text: 'La actividad se ha creado correctamente.',
                     confirmButtonColor: '#1a202c'
+                }).then(() => {
+                    fetchActividades(); // Recargar actividades después de la creación exitosa
                 });
 
             }  else {
-
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
@@ -80,6 +80,7 @@ export const alertaCrearActividad = async (idInforme) => {
         }
     }
 };
+
 
 export const exitoGuardarInforme = (mensaje) =>{
     Swal.fire({
