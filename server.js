@@ -276,8 +276,6 @@ app.get('/estudiante/:id', (req, res) => {
         LEFT JOIN tesis t ON e.id_estudiante = t.id_estudiante
         WHERE e.id_estudiante = ?
     `;
-    console.log("Ejecutando consulta:", studentQuery);
-    console.log("Con parámetros:", estudianteId);
 
     db.query(studentQuery, [estudianteId], (err, results) => {
         if (err) {
@@ -359,47 +357,65 @@ app.post("/crearInforme", (req, res) => {
         // Recuperar el ID del último registro insertado
         const idInforme = results.insertId;
 
-        // Enviar respuesta incluyendo el idInforme
-        res.status(200).send({ message: "Informe guardado exitosamente", idInforme: idInforme });
+        // Definir el nuevo porcentaje de avance
+        const nuevoPorcentajeAvance = porcentajeAvance;
 
+        // Consulta de actualización
+        const updateQuery = 'UPDATE tesis SET total_porcentaje_avance = ? WHERE id_tesis = ?';
+
+        // Ejecutar la consulta de actualización
+        db.query(updateQuery, [nuevoPorcentajeAvance, idTesis], (updateError, updateResults) => {
+            if (updateError) {
+                console.error('Error al actualizar el porcentaje de avance:', updateError);
+                return res.status(500).send({ error: "Error al actualizar el porcentaje de avance en la base de datos" });
+            }
+
+            console.log(`Porcentaje de avance actualizado a ${nuevoPorcentajeAvance} para idTesis ${idTesis}`);
+
+            // Enviar respuesta incluyendo el idInforme
+            res.status(200).send({ message: "Informe guardado y porcentaje de avance actualizado exitosamente", idInforme: idInforme });
+        });
     });
 });
 
-app.post("/crearActividad", async (req, res) => {
-    try {
-        const { descripcion, fecha_actividad, id_informe } = req.body;
 
-        if (!id_informe || isNaN(id_informe)) {
-            return res.status(400).json({ error: "El ID del informe proporcionado no es válido" });
+app.post("/crearActividad", (req, res) => {
+    const { fechaActividad, detalle, idInforme } = req.body;
+
+    const insertQuery = 'INSERT INTO actividades (fecha_actividad, descripcion, id_informe) VALUES (?, ?, ?)';
+    db.query(insertQuery, [fechaActividad, detalle, idInforme], (error, results) => {
+        if (error) {
+            console.error('Error al insertar actividad:', error);
+            return res.status(500).send({ error: "Error al guardar la actividad en la base de datos" });
         }
 
-        // Asegúrate de enviar success:true en la respuesta cuando la inserción sea exitosa
-        res.status(200).send({ success: true, message: "Actividad creada exitosamente" });
-        
+        res.status(200).send({ message: "Actividad creada exitosamente" });
     });
+});
 
-        const insertQuery = 'INSERT INTO actividades (descripcion, fecha_actividad, id_informe) VALUES (?, ?, ?)';
-        await new Promise((resolve, reject) => {
-            db.query(insertQuery, [descripcion, fecha_actividad, id_informe], (error, results) => {
-                if (error) {
-                    console.error('Error al insertar actividad:', error);
-                    reject(error);
-                } else {
-                    resolve(results);
-                }
-            });
+app.get('/getPorcent/:idTesis', (req, res) => {
+    const idTesis = req.params.idTesis; // Corrección en la obtención del parámetro
+    const query = 'SELECT total_porcentaje_avance FROM tesis WHERE id_Tesis=?';
+    db.query(query, [idTesis], (err, results) => {
+        if (err) {
+            console.error("Error al obtener el porcentaje de tesis:", err);
+            return res.status(500).send({ error: "Problemas técnicos al recuperar los porcentajes." });
+        }
+        if (results.length === 0) {
+            return res.status(404).send({ error: "El informe no fue encontrado." });
+        }
+        const totalPorcentaje = results[0].total_porcentaje_avance;
+        res.status(200).send({
+            message: "Porcentaje recuperado exitosamente",
+            totalPorcentaje: totalPorcentaje
         });
-
-        res.status(200).json({ message: "Actividad creada correctamente" });
-    } catch (error) {
-        console.error("Error al crear la actividad:", error);
-        res.status(500).json({ error: "Error al crear la actividad" });
-    }
-
+    });
 });
 
 
-  
+
+
+
 
 
 app.listen(5000, () => {

@@ -10,7 +10,7 @@ const CreateInforme = () => {
   const [porcentajeAvance, setPorcentajeAvance] = useState('');
   const [tituloInforme, setTituloInforme] = useState('');
   const [fechaInforme, setFechaInforme] = useState('');
-  const [inputsEnabled, setInputsEnabled] = useState(false); // Nuevo estado para habilitar/deshabilitar inputs
+  const [inputsEnabled, setInputsEnabled] = useState(false); // Estado para habilitar/deshabilitar inputs
   const [idTesis, setIdTesis] = useState(''); // Estado para almacenar el id de la tesis
   const [informeId, setInformeId] = useState(null);
 
@@ -20,9 +20,13 @@ const CreateInforme = () => {
   const fetchStudentData = useCallback(async () => {
     try {
       const response = await fetch(`/estudiante/${id}`);
-      const data = await response.json();
-      setStudentData(data);
-      setIdTesis(data.id_tesis); // Establecer el id de la tesis en el estado
+      if (response.ok) {
+        const data = await response.json();
+        setStudentData(data);
+        setIdTesis(data.id_tesis); // Establecer el id de la tesis en el estado
+      } else {
+        throw new Error('Error al cargar los datos del estudiante');
+      }
     } catch (error) {
       console.error('Error al obtener los datos del estudiante:', error);
     }
@@ -37,6 +41,24 @@ const CreateInforme = () => {
     }
   }, [studentInfo, fetchStudentData]);
 
+  useEffect(() => {
+    const porcentajeTesis = async () => {
+      if (idTesis) {
+        try {
+          const respuesta = await fetch(`/getPorcent/${idTesis}`);
+          if (!respuesta.ok) {
+            throw new Error(`HTTP error! status: ${respuesta.status}`);
+          }
+          const data = await respuesta.json();
+          setPorcentajeAvance(data.totalPorcentaje);
+        } catch (error) {
+          console.error('Error al obtener el porcentaje de la tesis:', error);
+        }
+      }
+    };
+
+    porcentajeTesis();
+  }, [idTesis]);
 
   const handleGuardar = async () => {
     try {
@@ -52,7 +74,7 @@ const CreateInforme = () => {
           idTesis,
         }),
       });
-  
+
       const data = await response.json();
 
       if (response.ok) {
@@ -61,15 +83,12 @@ const CreateInforme = () => {
         return data.idInforme; // Retorna el idInforme para uso inmediato si es necesario
       } else {
         alert("Error al guardar el informe: " + data.error);
-
       }
     } catch (error) {
       console.error('Error al guardar el informe:', error);
       alert("Error al guardar el informe en la base de datos");
     }
   };
-  
-
 
   const handleCrearActividad = async (idInforme, descripcionActividad) => {
     try {
@@ -84,11 +103,11 @@ const CreateInforme = () => {
           id_informe: idInforme, // ID del informe pasado como argumento
         }),
       });
-  
+
       if (!response.ok) {
         throw new Error('Error al crear la actividad');
       }
-  
+
       const data = await response.json();
       console.log('Nueva actividad creada:', data); // Mostrar la respuesta en la consola para ver si se creó la actividad correctamente
       alert("Actividad creada correctamente");
@@ -96,14 +115,10 @@ const CreateInforme = () => {
       console.error('Error al crear la actividad:', error);
       alert("Error al crear la actividad");
     }
-
   };
-  
-  
 
   const handleCrearClick = async () => {
     if (!inputsEnabled) {
-
       setInputsEnabled(true); // Habilita los inputs si están deshabilitados
     } else {
       if (tituloInforme && fechaInforme && porcentajeAvance) {
@@ -111,13 +126,11 @@ const CreateInforme = () => {
         if (idInforme) {
           alertaCrearActividad(idInforme, handleCrearActividad); // Pasa el ID a la función de alerta
         }
-
       } else {
         alert('Por favor complete todos los campos del informe antes de continuar.');
       }
     }
   };
-  
 
   const handlePorcentajeChange = (e) => {
     const value = e.target.value;
