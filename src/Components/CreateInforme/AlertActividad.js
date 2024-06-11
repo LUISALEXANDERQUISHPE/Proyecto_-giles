@@ -1,13 +1,15 @@
 import Swal from 'sweetalert2';
 
-
 export const alertaCrearActividad = async (idInforme, fetchActividades) => {
     console.log("ID del informe recibido:", idInforme); 
     const { value: formValues } = await Swal.fire({
         title: 'Crear nueva actividad',
         html:
+            '<style>' +
+            '.custom-date-input { width: 100%; height: 40px; font-size: 16px; }' +
+            '</style>' +
             '<p class="swal2-title">Fecha de actividad</p>' +
-            '<input id="fecha-actividad" class="swal2-input" placeholder="Fecha de actividad" type="date">' +
+            '<input id="fecha-actividad" class="swal2-input custom-date-input" placeholder="Fecha de actividad" type="date">' +
             '<p class="swal2-title">Descripción</p>' +
             '<textarea id="detalle-actividad" class="swal2-textarea" placeholder="Descripción"></textarea>',
         focusConfirm: false,
@@ -81,8 +83,7 @@ export const alertaCrearActividad = async (idInforme, fetchActividades) => {
     }
 };
 
-
-export const exitoGuardarInforme = (mensaje) =>{
+export const exitoGuardarInforme = (mensaje) => {
     Swal.fire({
         title: mensaje,
         icon: 'success',
@@ -90,7 +91,7 @@ export const exitoGuardarInforme = (mensaje) =>{
         showConfirmButton: false,
         backdrop: true,
         timer: 2500,
-        timerProgressBar:true,
+        timerProgressBar: true,
         allowOutsideClick: false
     });
-}
+};
