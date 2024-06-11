@@ -46,7 +46,7 @@ const UserProfile = () => {
             <br />
             <h4>{userEmail}</h4>
             <br />
-            <h4>ID Tutor: {userId}</h4> {/* Muestra el ID del tutor */}
+             {/* Muestra el ID del tutor//<h4>ID Tutor: {userId}</h4>*/}
           </div>
         </div>
       </div>

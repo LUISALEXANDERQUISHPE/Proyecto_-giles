@@ -1,11 +1,9 @@
 import Swal from 'sweetalert2';
 
 
-export const alertaCrearActividad = async (idInforme, handleCrearActividad) => {
+export const alertaCrearActividad = async (idInforme, fetchActividades) => {
+    console.log("ID del informe recibido:", idInforme); 
     const { value: formValues } = await Swal.fire({
-
-
-
         title: 'Crear nueva actividad',
         html:
             '<p class="swal2-title">Fecha de actividad</p>' +
@@ -17,7 +15,7 @@ export const alertaCrearActividad = async (idInforme, handleCrearActividad) => {
             return {
                 fechaActividad: document.getElementById('fecha-actividad').value,
                 detalle: document.getElementById('detalle-actividad').value,
-                idInforme: idInforme // Agrega el id_informe aquí
+                idInforme: idInforme
             };
         },
         showCancelButton: true,
@@ -33,7 +31,6 @@ export const alertaCrearActividad = async (idInforme, handleCrearActividad) => {
             confirmButton: 'custom-swal-button'
         }
     });
-
 
     if (formValues && formValues.fechaActividad && formValues.detalle) {
         console.log('Datos de la nueva actividad:', formValues);
@@ -57,10 +54,11 @@ export const alertaCrearActividad = async (idInforme, handleCrearActividad) => {
                     title: 'Actividad creada',
                     text: 'La actividad se ha creado correctamente.',
                     confirmButtonColor: '#1a202c'
+                }).then(() => {
+                    fetchActividades(); // Recargar actividades después de la creación exitosa
                 });
 
             }  else {
-
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
@@ -82,3 +80,17 @@ export const alertaCrearActividad = async (idInforme, handleCrearActividad) => {
         }
     }
 };
+
+
+export const exitoGuardarInforme = (mensaje) =>{
+    Swal.fire({
+        title: mensaje,
+        icon: 'success',
+        background: '#fff',
+        showConfirmButton: false,
+        backdrop: true,
+        timer: 2500,
+        timerProgressBar:true,
+        allowOutsideClick: false
+    });
+}

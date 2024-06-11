@@ -155,9 +155,9 @@ const RegStudents = () => {
               <td>{student.total_porcentaje_avance}%</td>
               <td>{capitalizeWords(student.nombre_estado)}</td>
               <td>
-                <Link to={`/review/${student.id_estudiante}`}>
-                  <span>Review</span>
-                </Link>
+              <Link to={`/review/${student.id_estudiante}`} style={{ color: '#a52a2a'}}> {/* Cambia 'red' por el color deseado */}
+                  <span>Revisar</span>
+              </Link>
               </td>
             </tr>
           ))}

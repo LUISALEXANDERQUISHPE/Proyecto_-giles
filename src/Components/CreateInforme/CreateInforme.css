@@ -160,3 +160,26 @@
   margin-right: 500px;
 
 }
+.pagination {
+  margin-top: 20px; /* Agregar espacio entre la tabla y los botones de paginación */
+  text-align: center;
+}
+
+.pagination button {
+  background-color: #800000; /* UTA color */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin: 0 5px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.pagination button:hover {
+  background-color: #a52a2a; /* Cambiar el color al pasar el ratón sobre el botón */
+}
+
+.pagination span {
+  margin: 0 10px;
+}
