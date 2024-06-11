@@ -2,7 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import images from '../Assets/img/images';
 import './CreateInforme.css';
 import { useParams, useLocation } from 'react-router-dom';
-import { alertaCrearActividad } from './AlertActividad'; // Importar la función de alerta
+import { alertaCrearActividad } from './AlertActividad';
+import {exitoGuardarInforme } from './AlertActividad'; // Importar la función de alerta
 
 const CreateInforme = () => {
   const { id } = useParams(); // Obtener el ID del estudiante desde la URL
@@ -58,79 +59,77 @@ const CreateInforme = () => {
     };
 
     porcentajeTesis();
-  }, [idTesis]);
-
-  const handleGuardar = async () => {
+  }, [idTesis]);  
+  
+  const handleGuardarInformeClick = async () => {
+    // Verifica que los campos requeridos estén llenos
+    if (!tituloInforme || !fechaInforme) {
+      alert('Error: Falta ingresar algunos campos requeridos. Por favor, asegúrate de llenar el título del informe y la fecha del informe antes de guardar.');
+      return; // Sale de la función si la validación falla
+    }
+  
     try {
-      const response = await fetch("/crearInforme", {
-        method: "POST",
+      const respuesta = await fetch("/updateInforme", {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          tituloInforme,
-          fechaInforme,
-          porcentajeAvance,
-          idTesis,
+          informeId: informeId,
+          tituloInforme: tituloInforme,
+          fechaInforme: fechaInforme,
+          porcentajeAvance: porcentajeAvance,
+          idTesis: idTesis
         }),
       });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setInformeId(data.idInforme); // Guarda el ID del informe en el estado
-        alert(data.message);
-        return data.idInforme; // Retorna el idInforme para uso inmediato si es necesario
-      } else {
-        alert("Error al guardar el informe: " + data.error);
+  
+      if (!respuesta.ok) {
+        throw new Error('Failed to update the report');
       }
+  
+      const data = await respuesta.json();
+      console.log('Success:', data.message);
+      exitoGuardarInforme('Anexo guardado');
+      //alert('Informe guardado correctamente!');
     } catch (error) {
-      console.error('Error al guardar el informe:', error);
+      console.error('Error:', error);
       alert("Error al guardar el informe en la base de datos");
     }
   };
-
-  const handleCrearActividad = async (idInforme, descripcionActividad) => {
+  
+  const handleConsultarId_informeFicticio = async (callback) => {
     try {
-      const response = await fetch("/crearActividad", {
+      const response = await fetch("/crearInforme_ficticio", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          descripcion: descripcionActividad, // Descripción de la actividad
-          fecha_actividad: new Date().toISOString().split('T')[0], // Fecha actual en formato ISO
-          id_informe: idInforme, // ID del informe pasado como argumento
-        }),
+        body: JSON.stringify({ idTesis }),
       });
-
-      if (!response.ok) {
-        throw new Error('Error al crear la actividad');
-      }
-
+  
       const data = await response.json();
-      console.log('Nueva actividad creada:', data); // Mostrar la respuesta en la consola para ver si se creó la actividad correctamente
-      alert("Actividad creada correctamente");
+      if (response.ok) {
+        setInformeId(data.idInforme);  // También actualiza el estado por si se necesita en otro lugar
+        console.log("Informe ficticio creado con ID:", data.idInforme);
+        callback(data.idInforme);  // Ejecutar callback con el nuevo ID
+      } else {
+        console.error("Error al crear el informe ficticio:", data.error);
+      }
     } catch (error) {
-      console.error('Error al crear la actividad:', error);
-      alert("Error al crear la actividad");
+      console.error('Error al guardar el informe:', error);
     }
   };
 
-  const handleCrearClick = async () => {
-    if (!inputsEnabled) {
-      setInputsEnabled(true); // Habilita los inputs si están deshabilitados
+  const handleCrearActividad = async () => {
+    if (!informeId) {  // Si no hay `informeId`, primero crea un informe ficticio
+      handleConsultarId_informeFicticio(alertaCrearActividad);
     } else {
-      if (tituloInforme && fechaInforme && porcentajeAvance) {
-        const idInforme = await handleGuardar(); // Asegúrate de esperar aquí
-        if (idInforme) {
-          alertaCrearActividad(idInforme, handleCrearActividad); // Pasa el ID a la función de alerta
-        }
-      } else {
-        alert('Por favor complete todos los campos del informe antes de continuar.');
-      }
+      alertaCrearActividad(informeId);
     }
   };
+  
+
+  
 
   const handlePorcentajeChange = (e) => {
     const value = e.target.value;
@@ -161,7 +160,7 @@ const CreateInforme = () => {
                      className="input-field" 
                      value={tituloInforme} 
                      onChange={(e) => setTituloInforme(e.target.value)} 
-                     disabled={!inputsEnabled} 
+                     
               />
             </p>
             <p><strong>Fecha informe:</strong> 
@@ -169,7 +168,7 @@ const CreateInforme = () => {
                      className="input-field input-field-fecha" 
                      value={fechaInforme} 
                      onChange={(e) => setFechaInforme(e.target.value)} 
-                     disabled={!inputsEnabled} 
+                   
               />
             </p>
             <p><strong>Porcentaje avance:</strong> 
@@ -178,7 +177,7 @@ const CreateInforme = () => {
                      value={porcentajeAvance} 
                      onChange={handlePorcentajeChange} 
                      min="0" max="100" 
-                     disabled={!inputsEnabled} 
+                    
               />
             </p>
           </div>
@@ -197,11 +196,16 @@ const CreateInforme = () => {
               </tbody>
             </table>
             <div className="buttons">
-              <button onClick={handleCrearClick}>
-                {inputsEnabled ? 'Guardar y Continuar' : 'Crear'}
+              <button onClick={handleCrearActividad}>
+                Agregar actividades
               </button>
               <button>Modificar</button>
               <button>Eliminar</button>
+              <button onClick={handleGuardarInformeClick} disabled={!tituloInforme || !fechaInforme}>
+              Guardar Anexo
+          </button>
+
+
             </div>
           </div>
         </div>

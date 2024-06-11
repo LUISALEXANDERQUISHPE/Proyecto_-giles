@@ -337,8 +337,11 @@ app.put('/updateestado/:id', (req, res) => {
     });
 });
 
-app.post("/crearInforme", (req, res) => {
-    const { tituloInforme, fechaInforme, porcentajeAvance, idTesis } = req.body;
+app.post("/crearInforme_ficticio", (req, res) => {
+    const { idTesis } = req.body;
+    const tituloInforme ='Informe prueba';
+    const fechaInforme= '2024-01-01';
+    const porcentajeAvance=0;
 
     // Verificar si idTesis es un valor válido
     if (!idTesis || isNaN(idTesis)) {
@@ -350,38 +353,21 @@ app.post("/crearInforme", (req, res) => {
     // Ejecutar la consulta de inserción
     db.query(insertQuery, [tituloInforme, fechaInforme, porcentajeAvance, idTesis], (error, results) => {
         if (error) {
-            console.error('Error al insertar informe:', error);
-            return res.status(500).send({ error: "Error al guardar el informe en la base de datos" });
+            console.error('Error al insertar informe de prueba:', error);
+            return res.status(500).send({ error: "Error al guardar el informe de prueba en la base de datos" });
         }
 
         // Recuperar el ID del último registro insertado
         const idInforme = results.insertId;
-
-        // Definir el nuevo porcentaje de avance
-        const nuevoPorcentajeAvance = porcentajeAvance;
-
-        // Consulta de actualización
-        const updateQuery = 'UPDATE tesis SET total_porcentaje_avance = ? WHERE id_tesis = ?';
-
-        // Ejecutar la consulta de actualización
-        db.query(updateQuery, [nuevoPorcentajeAvance, idTesis], (updateError, updateResults) => {
-            if (updateError) {
-                console.error('Error al actualizar el porcentaje de avance:', updateError);
-                return res.status(500).send({ error: "Error al actualizar el porcentaje de avance en la base de datos" });
-            }
-
-            console.log(`Porcentaje de avance actualizado a ${nuevoPorcentajeAvance} para idTesis ${idTesis}`);
-
             // Enviar respuesta incluyendo el idInforme
-            res.status(200).send({ message: "Informe guardado y porcentaje de avance actualizado exitosamente", idInforme: idInforme });
-        });
+            res.status(200).send({ message: "Informe de prueba guardado ", idInforme: idInforme });
     });
 });
 
 
 app.post("/crearActividad", (req, res) => {
+    console.log(req.body);
     const { fechaActividad, detalle, idInforme } = req.body;
-
     const insertQuery = 'INSERT INTO actividades (fecha_actividad, descripcion, id_informe) VALUES (?, ?, ?)';
     db.query(insertQuery, [fechaActividad, detalle, idInforme], (error, results) => {
         if (error) {
@@ -412,8 +398,63 @@ app.get('/getPorcent/:idTesis', (req, res) => {
     });
 });
 
+app.put('/updateInforme', (req, res) => {
+    console.log(req.body);
+    const { informeId, tituloInforme, fechaInforme, porcentajeAvance, idTesis } = req.body;
 
+    // Verificar si idInforme y idTesis son valores válidos
+    if (!informeId || isNaN(informeId) || !idTesis || isNaN(idTesis)) {
+        return res.status(400).send({ error: "El ID del informe o el ID de la tesis proporcionado no es válido" });
+      }
+      
 
+    // Consulta de actualización del informe
+    const updateInformeQuery = 'UPDATE informes SET nombre_informe = ?, fecha_informe = ?, porcentaje_avance = ? WHERE id_informe = ?';
+
+    // Ejecutar la consulta de actualización del informe
+    db.query(updateInformeQuery, [tituloInforme, fechaInforme, porcentajeAvance, informeId], (updateError, updateResults) => {
+        if (updateError) {
+            console.error('Error al actualizar el informe:', updateError);
+            return res.status(500).send({ error: "Error al actualizar el informe en la base de datos" });
+        }
+
+        console.log(`Informe con idInforme ${informeId} actualizado correctamente`);
+
+        // Actualizar el porcentaje de avance en la tabla tesis
+        const nuevoPorcentajeAvance = porcentajeAvance;
+        const updateTesisQuery = 'UPDATE tesis SET total_porcentaje_avance = ? WHERE id_tesis = ?';
+
+        db.query(updateTesisQuery, [nuevoPorcentajeAvance, idTesis], (updateTesisError, updateTesisResults) => {
+            if (updateTesisError) {
+                console.error('Error al actualizar el porcentaje de avance en tesis:', updateTesisError);
+                return res.status(500).send({ error: "Error al actualizar el porcentaje de avance en la base de datos" });
+            }
+
+            console.log(`Porcentaje de avance actualizado a ${nuevoPorcentajeAvance} para idTesis ${idTesis}`);
+            res.status(200).send({ message: "Informe y porcentaje de avance actualizados exitosamente" });
+        });
+    });
+});
+
+app.get('/actividades', (req, res) => {
+    const {informeId}= req.body;
+    const activitiesQuery = `
+        SELECT 
+            a.fecha_actividad,
+            a.descripcion
+        FROM actividades a
+        WHERE a.id_informe = ?
+    `;// Descomenta las siguientes líneas para depurar la consulta y los parámetros
+    // console.log("Ejecutando consulta:", activitiesQuery);
+    // console.log("Con parámetros:", idInforme);
+    db.query(activitiesQuery, [informeId], (err, results) => {
+        if (err) {
+            console.error("Error al obtener actividades:", err);
+            return res.status(500).send({ error: "Problemas técnicos al recuperar actividades." });
+        }
+        res.status(200).send(results);
+    });
+});
 
 
 

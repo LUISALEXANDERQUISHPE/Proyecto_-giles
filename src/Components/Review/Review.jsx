@@ -9,7 +9,7 @@ const Review = () => {
     const [studentInfo, setStudentInfo] = useState(null); // Estado para los detalles del estudiante
     const [reports, setReports] = useState([]); // Estado para los informes
     const [currentPage, setCurrentPage] = useState(1); // Estado para la paginación
-    const [itemsPerPage, setItemsPerPage] = useState(4); // Estado para el número de elementos por página
+    const [itemsPerPage, setItemsPerPage] = useState(6); // Estado para el número de elementos por página
     const navigate = useNavigate(); // Hook para la navegación
 
     useEffect(() => {
@@ -119,16 +119,17 @@ const Review = () => {
                 </thead>
                 <tbody>
                     {currentItems.map((report) => (
-                        <tr key={report.nombre_informe}>
+                        <tr key={report.id}>  {/* Usar ID único como clave */}
                             <td>{report.nombre_informe}</td>
                             <td>{report.fecha_informe}</td>
                             <td>{report.porcentaje_avance}%</td>
-                            <td><Link to="/Review" className='menu-item-btn'>
+                            <td><Link to={`/review/${report.id}`} className='menu-item-btn' style={{ color: '#a52a2a'}}> {/* Suponiendo que quieras enlazar a una página de edición específica del informe */}
                                 <span className='menu-item'>Editar</span>
                             </Link></td>
                         </tr>
                     ))}
                 </tbody>
+
             </table>
 
             <div className="pagination">
