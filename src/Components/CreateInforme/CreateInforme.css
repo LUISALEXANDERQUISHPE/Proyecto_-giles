@@ -130,8 +130,17 @@
 
 .buttons {
   display: flex;
-  gap: 10px;
+  font-size: 12px; /* Ajusto el tamaño de la fuente */
+  height: 42px;
+  gap: 15px; /* Reduzco el espacio entre los botones */
+
 }
+
+.buttons button {
+  padding: 5px 10px; /* Ajusto el relleno del botón */
+  font-size: 13px; /* Ajusto el tamaño de la fuente de los botones */
+}
+
 
 .report-preview {
   text-align: center;
@@ -182,4 +191,9 @@
 
 .pagination span {
   margin: 0 10px;
+}
+/* Agrega esta clase CSS en tu archivo CreateInforme.css */
+.selected {
+  background-color: #e0e0e0;
+  cursor: pointer;
 }
