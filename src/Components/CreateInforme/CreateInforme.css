@@ -75,19 +75,20 @@
 }
 
 /* New styles for central content */
-.central-content {
-  display: flex;
+.centra-content {
+
   justify-content: space-between;
   gap: 0px;
   padding: 10px;
   border-top: 2px solid #800000;
   width: 100%;
   height: 100vh; /* Set height to fill the viewport */
-  box-sizing: border-box;
+
 }
 
 .left-section, .right-section {
   flex: 1;
+  
   padding: 20px;
   background-color: #f9f9f9;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -130,17 +131,8 @@
 
 .buttons {
   display: flex;
-  font-size: 12px; /* Ajusto el tamaño de la fuente */
-  height: 42px;
-  gap: 15px; /* Reduzco el espacio entre los botones */
-
+  gap: 10px;
 }
-
-.buttons button {
-  padding: 5px 10px; /* Ajusto el relleno del botón */
-  font-size: 13px; /* Ajusto el tamaño de la fuente de los botones */
-}
-
 
 .report-preview {
   text-align: center;
@@ -192,8 +184,108 @@
 .pagination span {
   margin: 0 10px;
 }
-/* Agrega esta clase CSS en tu archivo CreateInforme.css */
-.selected {
-  background-color: #e0e0e0;
+.cr{
+  display: grid;
+  grid-template-columns: 500px 1fr;
+  height: 100px;
+  background-color: white;
+  
+
+}
+.left-column {
+ 
+  margin :0px;
+  padding: 0px;
+  width: 1000px;
+  margin: 0px;
+  height: 40px; 
+  border :0px
+  
+}
+.right-column {
+  display: grid;
+  border: 1px solid black;
+  grid-template-rows: 1fr 1fr;
+  gap: 0px;
+  position: relative;
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center;
+  padding: 0px;
+  left:200px;
+  width: 130px;
+  height:120px;
+  float: left;
+}
+.imagenPDF{
+  padding:0px;
+  margin :0px;
+  top :20px;
+  width: 70px;
+  height:80px;
+}
+
+.izquierda {
+  float: left;
+  width: 50%;
+
+}
+
+.derecha {
+  float: right;
+  width: 50%;
+}
+
+ .rigthCol{
+  transform: translateX(0%);
+  justify-content: flex-end;
+  width: calc(50% - 5px);
+
+}
+ .leftCol{
+  display: flex;
+  transform: translateX(-100%);
+  justify-content: flex-start;
+
+  width: calc(50% - 5px);
+}
+
+.close-button {
+  left: 10px; /* Ajusta la posición desde la izquierda */
+  width: 40px; /* Ancho del botón */
+  height: 40px; /* Alto del botón */
+  border-radius: 50%; /* Para hacerlo circular */
+  background-color: rgba(0, 0, 0, 0.5); /* Color de fondo con transparencia */
+  color: white; /* Color del texto */
+  font-size: 24px; /* Tamaño del texto */
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
+  z-index: 1000; 
+  position: absolute;
+  top: 10px; 
+  right: 10px
+}
+
+.close-button:hover {
+  background-color: white /* Cambia el color de fondo al pasar el mouse */
+}
+
+.hiden{
+  display: none
+}
+.pdf-container {
+  padding: 0;
+  display: flex;
+  width: 50%;
+  height: 100%;
+  left: 70%; /* Ocupa toda la altura disponible */
+  position: absolute;
+ /* Inicialmente oculto */
+}
+
+.pdf-iframe {
+  
+  width: 100%;
+  height: 100%;
 }

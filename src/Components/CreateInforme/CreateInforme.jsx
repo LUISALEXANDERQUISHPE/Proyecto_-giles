@@ -4,7 +4,8 @@
   import { useParams, useLocation } from 'react-router-dom';
   import { alertaCrearActividad } from './AlertActividad';
   import {exitoGuardarInforme } from './AlertActividad'; // Importar la función de alerta
-
+  import imagen from "./PDF_icon.svg"
+  let url;
   const CreateInforme = () => {
     const { id } = useParams(); // Obtener el ID del estudiante desde la URL
     const [studentData, setStudentData] = useState(null);
@@ -17,12 +18,12 @@
     const [actividades, setActividades] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(4); // Ajusta según tus necesidades
-    
+    const [showIframe, setShowIframe] = useState(false);
+    const [URLPDF, setURLPDF] = useState(null);
     const lastIndex = currentPage * itemsPerPage;
     const firstIndex = lastIndex - itemsPerPage;
     const currentActividades = actividades.slice(firstIndex, lastIndex);
     
-
 
 
     const location = useLocation();
@@ -131,6 +132,53 @@
       
     };
 
+    const handleVisualizarInformeClick= async()=> {
+      setShowIframe(true);
+      let observaciones=[ ];
+      const response = await fetch(`/nombre_tesis/${id}`);
+      const data = await response.json();
+      const  nombre_Tesis = data.tema_tesis;
+      const responseTu = await fetch(`/tutor/${id}`);
+      const dataTu = await responseTu.json();
+      const  tutor  = dataTu.nombres_tutor +" "+ dataTu.apellidos_tutor;
+      let datos = {
+        carrera: studentData ? studentData.nombre_carrera : '', // Ejemplo de cómo obtener la carrera del estudiante, asegúrate de ajustar según la estructura de tu objeto studentData
+        fecha:fechaInforme, // Utilizando el estado de fechaInforme
+        nombreEstudiante: studentData.nombres+" "+studentData.apellidos, // Ejemplo de cómo obtener el nombre del estudiante, ajusta según tu objeto studentData
+        tema:nombre_Tesis, // Utilizando el estado de tituloInforme
+        fechaAprobacion: studentData.fecha_aprobacion , // Aquí deberías obtener la fecha de aprobación, según tu lógica de negocio
+        porcentaje: porcentajeAvance,
+        tutor:tutor // Utilizando el estado de porcentajeAvance
+      };
+      let actividadesS=actividades;
+      fetch('/informePDF', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ datos, actividadesS, observaciones })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la respuesta del servidor');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+              url=URL.createObjectURL(blob)
+              console.log("-------------")
+              console.log(url)
+              setURLPDF(url);
+            })
+            .catch(error => {
+                console.error('Error al generar el informe PDF:', error);
+            });
+            
+    }  
+    const handleCerrarInformeClick= async()=> {
+      setShowIframe(false);
+    }  
+
     const handleCrearActividad = async () => {
       if (!informeId) {
           // Si no hay `informeId`, primero crea un informe ficticio
@@ -190,8 +238,8 @@
             <img src={images.img1} alt="Logo UTA" className="profile-logo" />
           </div>
         </div>
-
-        <div className="central-content">
+        <div id ="contenido" style={{display: showIframe ? 'flex' : 'block'}}>
+        <div id="left" className="centra-content" style={{ width: showIframe ? '40%' : '100%' }}>
           <div className="left-section">
             <div className="student-info">
               <p><strong>Estudiante:</strong> <span>{studentData ? `${studentData.nombres} ${studentData.apellidos}` : 'Cargando...'}</span></p>
@@ -205,23 +253,35 @@
                       
                 />
               </p>
+              <div id ="con" className="cr">
+              <div className=" column  left-column">
               <p><strong>Fecha informe:</strong> 
-                <input type="date" 
-                      className="input-field input-field-fecha" 
-                      value={fechaInforme} 
-                      onChange={(e) => setFechaInforme(e.target.value)} 
-                    
+                <input 
+                  type="date" 
+                  className="input-field input-field-fecha" 
+                  value={fechaInforme} 
+                  onChange={(e) => setFechaInforme(e.target.value)} 
                 />
               </p>
+              
+              
               <p><strong>Porcentaje avance:</strong> 
-                <input type="number" 
-                      className="input-field input-field-porcentaje" 
-                      value={porcentajeAvance} 
-                      onChange={handlePorcentajeChange} 
-                      min="0" max="100" 
-                      
+                <input 
+                  type="number" 
+                  className="input-field input-field-porcentaje" 
+                  value={porcentajeAvance} 
+                  onChange={handlePorcentajeChange} 
+                  min="0" 
+                  max="100" 
                 />
               </p>
+              </div>
+              <div id="botonPDF" className={showIframe ? 'hiden':'column right-column'} onClick={handleVisualizarInformeClick}>
+                <img className="imagenPDF" src={imagen}  />
+                <p>Visualizar PDF</p>
+              </div>
+              </div>
+             
             </div>
 
             <div className="activities">
@@ -248,9 +308,9 @@
             </table>
 
             <div className="pagination">
-                <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>Anterior</button>
+                <button id="an" onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>Anterior</button>
                 <span>Página {currentPage} de {Math.ceil(actividades.length / itemsPerPage)}</span>
-                <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(actividades.length / itemsPerPage)))} disabled={currentPage === Math.ceil(actividades.length / itemsPerPage)}>Siguiente</button>
+                <button id ="sig" onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(actividades.length / itemsPerPage)))} disabled={currentPage === Math.ceil(actividades.length / itemsPerPage)}>Siguiente</button>
             </div>
 
             <br />
@@ -267,22 +327,22 @@
             </div>
           </div>
 
-          <div className="right-section">
-            <div className="report-preview">
-              <h4>Ejemplo de Asunto Técnico</h4>
-              <div className="report-content">
-                <p>1. ANTECEDENTES...</p>
-                <p>1. ANTECEDENTES...</p>
-                <p>2. OBJETO DEL CONTRATO...</p>
-              </div>
-              <button>Descargar</button>
-            </div>
-          </div>
+        </div>
+      
+      
+        <div id="pdfC" className={showIframe? "pdf-container":"hiden"}>
+          <iframe
+            id="pdf"
+            className="pdf-iframe"
+            src={url}
+          ></iframe>
+           <button className="close-button"  onClick={handleCerrarInformeClick}>X</button>
+        </div>
+      
+   
         </div>
       </div>
     );
   };
-
-  
 
   export default CreateInforme;
