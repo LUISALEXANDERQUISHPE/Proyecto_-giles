@@ -3,7 +3,8 @@ const mysql = require("mysql");
 const bcrypt = require('bcrypt');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-
+const {generarInformePDF,generarInformePDFFinal} = require('./generarAnexo.js');
+const path = require('path');
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -356,7 +357,6 @@ app.post("/crearInforme_ficticio", (req, res) => {
             console.error('Error al insertar informe de prueba:', error);
             return res.status(500).send({ error: "Error al guardar el informe de prueba en la base de datos" });
         }
-
         // Recuperar el ID del último registro insertado
         const idInforme = results.insertId;
             // Enviar respuesta incluyendo el idInforme
@@ -458,17 +458,137 @@ app.get('/actividades/:idInforme', (req, res) => {
         res.status(200).send(results);
     });
 });
+app.get('/tutor/:idEstudiante', (req, res) => {
+    const idEstudiante = req.params.idEstudiante;
+    const query = `
+      SELECT t.nombres AS nombres_tutor, t.apellidos AS apellidos_tutor
+      FROM estudiantes e
+      JOIN tutores t ON e.id_tutor = t.id_tutores
+      WHERE e.id_estudiante = ?
+    `;
+  
+    // Ejecuta la consulta en la base de datos
+    db.query(query, [idEstudiante], (err, results) => {
+      if (err) {
+        console.error('Error al obtener el nombre del tutor:', err);
+        return res.status(500).send({ error: 'Problemas técnicos al recuperar el nombre del tutor.' });
+      }
+  
+      if (results.length > 0) {
+        const { nombres_tutor, apellidos_tutor } = results[0];
+        res.status(200).send({ nombres_tutor, apellidos_tutor });
+      } else {
+        res.status(404).send({ error: 'No se encontró el tutor asociado al estudiante con el ID proporcionado.' });
+      }
+    });
+  });
+  
+  // Endpoint para obtener el nombre de la tesis por ID de estudiante
+  app.get('/nombre_tesis/:idEstudiante', (req, res) => {
+    const idEstudiante = req.params.idEstudiante;
+    const query = `
+      SELECT te.tema AS tema_tesis
+      FROM estudiantes e
+      JOIN tesis te ON e.id_estudiante = te.id_estudiante
+      WHERE e.id_estudiante = ?
+    `;
+  
+    // Ejecuta la consulta en la base de datos
+    db.query(query, [idEstudiante], (err, results) => {
+      if (err) {
+        console.error('Error al obtener el nombre de la tesis:', err);
+        return res.status(500).send({ error: 'Problemas técnicos al recuperar el nombre de la tesis.' });
+      }
+  
+      if (results.length > 0) {
+        const { tema_tesis } = results[0];
+        res.status(200).send({ tema_tesis });
+      } else {
+        res.status(404).send({ error: 'No se encontró la tesis asociada al estudiante con el ID proporcionado.' });
+      }
+    });
+  });
+app.post('/informePDF', (req, res) => {
+    const datos= req.body.datos;
+    const actividades=req.body.actividadesS
+    const observaciones= req.body.observaciones
+    console.log(datos)
+    console.log(observaciones)
+    generarInformePDF(actividades,datos,observaciones);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'inline; filename="example.pdf"');
+    const filePath = './Anexo_6.pdf'; // Ruta absoluta o relativa al archivo PDF
+    const absolutePath = path.resolve(filePath);
+    res.sendFile(absolutePath);
 
+  });
+
+  app.post('/informe-final', (req, res) => {
+        const  id_estudiante  = req.body.id_estudiante;
+        
+        if (!id_estudiante) {
+          return res.status(400).send('ID del estudiante es requerido');
+        }
+      
+        const studentInfoQuery = `
+          SELECT 
+            e.nombres AS nombre_estudiante, 
+            t.tema AS tema_trabajo,
+            t.fecha_aprobacion AS fecha_aprobacion
+          FROM estudiantes e
+          JOIN tesis t ON e.id_estudiante = t.id_estudiante
+          WHERE e.id_estudiante = ?
+        `;
+      
+        const activitiesQuery = `
+          SELECT 
+            a.fecha_actividad, 
+            a.descripcion
+          FROM actividades a
+          JOIN informes i ON a.id_informe = i.id_informe
+          JOIN tesis t ON i.id_tesis = t.id_tesis
+          WHERE t.id_estudiante = ?
+        `;
+      
+        db.query(studentInfoQuery, [id_estudiante], (err, studentInfoResults) => {
+          if (err) {
+            console.error('Error fetching student info:', err);
+            return res.status(500).send('Error fetching student info');
+          }
+      
+          if (studentInfoResults.length === 0) {
+            return res.status(404).send('Estudiante no encontrado');
+          }
+      
+          const studentInfo = studentInfoResults[0];
+      
+          db.query(activitiesQuery, [id_estudiante], (err, activitiesResults) => {
+            if (err) {
+              console.error('Error fetching activities:', err);
+              return res.status(500).send('Error fetching activities');
+            }
+      
+            const datos = {
+                fecha: req.body.fecha,
+                nombre_estudiante: studentInfo.nombre_estudiante,
+                tema_trabajo: studentInfo.tema_trabajo,
+                fecha_aprobacion: studentInfo.fecha_aprobacion,
+                porcentaje_avance: req.body.porcentaje_avance
+              };
+            generarInformePDFFinal( activitiesResults, datos)
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', 'inline; filename="example.pdf"');
+            const filePath = './Anexo_13.pdf'; // Ruta absoluta o relativa al archivo PDF
+            const absolutePath = path.resolve(filePath);
+            res.sendFile(absolutePath);
+          });
+        });
+      });
 
 
 
 app.listen(5000, () => {
     console.log("Server is running on port 5000");
 });
-
-
-
-
-
 
 
