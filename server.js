@@ -4,9 +4,10 @@ const bcrypt = require('bcrypt');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const {generarInformePDF,generarInformePDFFinal} = require('./generarAnexo.js');
+const agruparPorMes= require('./organizarDatos.js');
 const path = require('path');
-const app = express();
-app.use(cors());
+const app = express();              
+app.use(cors()); 
 app.use(bodyParser.json());
 
 const db = mysql.createConnection({
@@ -89,7 +90,6 @@ app.post('/login', (req, res) => {
         if (results.length === 0) {
             return res.status(400).send({ error: "Usuario no encontrado. Verifica tu correo electrónico." });
         }
-
         const user = results[0];
         bcrypt.compare(contrasenia, user.contrasenia, (bcryptErr, bcryptResult) => {
             if (bcryptErr) {
@@ -512,81 +512,73 @@ app.post('/informePDF', (req, res) => {
     const datos= req.body.datos;
     const actividades=req.body.actividadesS
     const observaciones= req.body.observaciones
-    console.log(datos)
-    console.log(observaciones)
     generarInformePDF(actividades,datos,observaciones);
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'inline; filename="example.pdf"');
-    const filePath = './Anexo_6.pdf'; // Ruta absoluta o relativa al archivo PDF
+    const filePath = './Anexo_5.pdf'; // Ruta absoluta o relativa al archivo PDF
     const absolutePath = path.resolve(filePath);
     res.sendFile(absolutePath);
 
   });
 
-  app.post('/informe-final', (req, res) => {
-        const  id_estudiante  = req.body.id_estudiante;
-        
-        if (!id_estudiante) {
-          return res.status(400).send('ID del estudiante es requerido');
-        }
-      
-        const studentInfoQuery = `
-          SELECT 
-            e.nombres AS nombre_estudiante, 
-            t.tema AS tema_trabajo,
-            t.fecha_aprobacion AS fecha_aprobacion
-          FROM estudiantes e
-          JOIN tesis t ON e.id_estudiante = t.id_estudiante
-          WHERE e.id_estudiante = ?
-        `;
-      
-        const activitiesQuery = `
-          SELECT 
-            a.fecha_actividad, 
-            a.descripcion
-          FROM actividades a
-          JOIN informes i ON a.id_informe = i.id_informe
-          JOIN tesis t ON i.id_tesis = t.id_tesis
-          WHERE t.id_estudiante = ?
-        `;
-      
-        db.query(studentInfoQuery, [id_estudiante], (err, studentInfoResults) => {
-          if (err) {
-            console.error('Error fetching student info:', err);
-            return res.status(500).send('Error fetching student info');
-          }
-      
-          if (studentInfoResults.length === 0) {
-            return res.status(404).send('Estudiante no encontrado');
-          }
-      
-          const studentInfo = studentInfoResults[0];
-      
-          db.query(activitiesQuery, [id_estudiante], (err, activitiesResults) => {
-            if (err) {
-              console.error('Error fetching activities:', err);
-              return res.status(500).send('Error fetching activities');
-            }
-      
-            const datos = {
-                fecha: req.body.fecha,
-                nombre_estudiante: studentInfo.nombre_estudiante,
-                tema_trabajo: studentInfo.tema_trabajo,
-                fecha_aprobacion: studentInfo.fecha_aprobacion,
-                porcentaje_avance: req.body.porcentaje_avance
-              };
-            generarInformePDFFinal( activitiesResults, datos)
-            res.setHeader('Content-Type', 'application/pdf');
-            res.setHeader('Content-Disposition', 'inline; filename="example.pdf"');
-            const filePath = './Anexo_13.pdf'; // Ruta absoluta o relativa al archivo PDF
-            const absolutePath = path.resolve(filePath);
-            res.sendFile(absolutePath);
-          });
+  
+
+app.get('/informeFinal/:id_estudiante', async (req, res) => {
+    const idEstudiante = req.params.id_estudiante;
+    const sqlQuery1 = `
+    SELECT 
+    CONCAT(e.nombres, ' ', e.apellidos) AS nombre_estudiante,
+    t.tema AS tema_trabajo,
+    t.fecha_aprobacion,
+    c.nombre_carrera,
+    CONCAT(tu.nombres, ' ', tu.apellidos) AS nombre_tutor
+        FROM 
+    tesis t
+    JOIN 
+        estudiantes e ON t.id_estudiante = e.id_estudiante
+    JOIN 
+        carreras c ON e.id_carrera = c.id_Carreras
+    JOIN 
+        tutores tu ON e.id_tutor = tu.id_tutores;
+    `;
+
+    db.query(sqlQuery1, [idEstudiante], (err, results1) => {
+      if (err) {
+        console.error('Error al ejecutar la consulta:', err);
+        return;
+      }
+      let studentInfo=results1[0]
+      const datos = {
+        fecha: new Date().toISOString(),
+        nombreEstudiante: studentInfo.nombre_estudiante,
+        tema: studentInfo.tema_trabajo,
+        fechaAprobacion: studentInfo.fecha_aprobacion.toISOString(),
+        carrera: studentInfo.nombre_carrera,
+        tutor: studentInfo.nombre_tutor, 
+        porcentaje: "100"
+    };
+    const sqlQuery2 = `
+       SELECT a.fecha_actividad, a.descripcion
+        FROM actividades a, informes i, tesis t, estudiantes e
+        WHERE a.id_informe = i.id_informe
+        AND i.id_tesis = t.id_tesis
+        AND t.id_estudiante = e.id_estudiante
+        AND e.id_estudiante = ?;
+    `;
+    db.query(sqlQuery2, [idEstudiante], (err, results2) =>{
+
+        let respuesta = agruparPorMes(results2)
+        generarInformePDFFinal(respuesta,datos);
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'inline; filename="example.pdf"');
+        const filePath = './Anexo_11.pdf'; // Ruta absoluta o relativa al archivo PDF
+        const absolutePath = path.resolve(filePath);
+        res.sendFile(absolutePath);
         });
-      });
+    });
 
-
-
+});
+    
 app.listen(5000, () => {
     console.log("Server is running on port 5000");
 });
