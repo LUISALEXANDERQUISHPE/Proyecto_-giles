@@ -227,6 +227,28 @@
         setPorcentajeAvance(value);
       }
     };
+    const handleInformeFinal= (e) => {
+      setShowIframe(true);
+      fetch(`/informeFinal/${id}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error en la respuesta del servidor');
+        }
+        return response.blob();
+    })
+    .then(blob => {
+      url=URL.createObjectURL(blob)
+    })
+    .catch(error => {
+        console.error('Error al generar el informe PDF:', error);
+    });
+    };
 
     return (
       <div className="profile-container">
@@ -320,6 +342,7 @@
                 </button>
                 <button>Modificar</button>
                 <button>Eliminar</button>
+                <button onClick={handleInformeFinal}>Crear informe final</button>
                 <button onClick={handleGuardarInformeClick} disabled={!tituloInforme || !fechaInforme}>
                 Guardar Anexo
             </button>

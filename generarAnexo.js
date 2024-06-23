@@ -6,11 +6,11 @@ function generarInformePDF(actividades, datos, observaciones) {
     const leftMargin = 30; // 3 cm en mm
     const rightMargin = 30; // 3 cm en mm
     const doc = new MiPDF(topMargin, leftMargin, bottomMargin, rightMargin);
-    ponerEncabezado(datos, doc);
+    ponerEncabezado(datos, doc, 5);
     ponerActividades(actividades, doc);
     ponerObservaciones(observaciones, doc);
     ponerFirmaNota(doc, datos.tutor); 
-    doc.save("Anexo_6.pdf")
+    doc.save("Anexo_5.pdf")
   }
   function generarInformePDFFinal(actividades, datos) {
     const topMargin = 25.4; // 1 pulgada en mm
@@ -18,18 +18,18 @@ function generarInformePDF(actividades, datos, observaciones) {
     const leftMargin = 30; // 3 cm en mm
     const rightMargin = 30; // 3 cm en mm
     const doc = new MiPDF(topMargin, leftMargin, bottomMargin, rightMargin);
-    ponerEncabezado(datos, doc);
-    ponerActividades(actividades, doc);
+    ponerEncabezado(datos, doc, 11);
+    ponerActividadesFinal(actividades, doc);
     ponerFirmaNotaFinal(doc, datos.tutor); 
-    doc.save("Anexo_13.pdf")
+    doc.save("Anexo_11.pdf")
   }
 
-  function ponerEncabezado(datos, doc) {
+  function ponerEncabezado(datos, doc, num) {
     doc.setFont('times', 'bold');
     doc.setFontSize(12);
   
     // Añadir los textos usando el método texto de MiPDF
-    doc.centrarTexto('ANEXO 6');
+    doc.centrarTexto(`ANEXO ${num}`);
     doc.espacio();
     doc.centrarTexto('INFORME MENSUAL DEL AVANCE DEL TRABAJO DE TITULACIÓN');
     doc.interlineado(4);
@@ -44,7 +44,7 @@ function generarInformePDF(actividades, datos, observaciones) {
     doc.espacio();
     doc.interlineado(4);
     doc.setFontSize(10);
-    doc.texto('FECHA: ' + datos.fecha.toUpperCase());
+    doc.texto('FECHA: ' +cortarEnT(datos.fecha));
     doc.espacio();
     doc.texto('NOMBRE DEL ESTUDIANTE: ' + datos.nombreEstudiante.toUpperCase());
     doc.espacio();
@@ -53,7 +53,7 @@ function generarInformePDF(actividades, datos, observaciones) {
     doc.texto('TEMA DEL TRABAJO DE TITULACIÓN: ' + datos.tema.toUpperCase());
     doc.espacio();
     let texto = 'FECHA DE APROBACIÓN DE LA PROPUESTA DEL TRABAJO DE TITULACIÓN POR EL CONSEJO DIRECTIVO: ' 
-    + datos.fechaAprobacion.toUpperCase();
+    + cortarEnT(datos.fechaAprobacion);
     doc.texto(texto);
     doc.espacio();
     doc.texto('PORCENTAJE DE AVANCE DE ACUERDO AL CRONOGRAMA: ' + datos.porcentaje + '%');
@@ -90,34 +90,42 @@ function generarInformePDF(actividades, datos, observaciones) {
     doc.espacio()
     doc.espacio()
     doc.espacio()
+    doc.espacio()
+    doc.espacio()
+    doc.espacio()
+    doc.espacio()
+    doc.espacio()
     doc.centrarTexto('_________________________________________\n')
     doc.interlineado(1)
     doc.centrarTexto ( tutor.toUpperCase() )
     doc.interlineado(2)
-    doc.centrarTexto('TUTOR TRABAJO TITULACIÓN');
-    doc.interlineado(4);
-    doc.espacio();
-    doc.espacio();
-    doc.interlineado(4);
-    doc.setFont('times', 'normal');
-    doc.setFontSize(10);
-    doc.texto('NOTA: los informes mensuales de los avances del trabajo de'+
-        ' titulación emitidos por el docente tutor deberán ser enviados por Quipux a la secretaría de la Unidad de Titulación'+
-        ' con copia al docente miembro de la Unidad de Titulación y por correo al estudiante, debidamente firmados.');
-
-    
+    doc.centrarTexto('TUTOR TRABAJO TITULACIÓN')
       }
   
   function ponerActividades(activities, doc) {
     if(activities.length==0)
         return
 
-    doc.filaDosColumnas("Fecha", 20, "Actividad", 130);
+    doc.filaDosColumnas("Fecha", 20, "Actividad", 128);
     doc.setFont('times', 'normal');
     activities.forEach(item => {
         const nombre = cortarEnT(item.fecha_actividad.toString()); // Convertir a string por si acaso
         const valor = item.descripcion.toString(); // Convertir a string por si acaso
-        doc.filaDosColumnas(nombre, 20, valor, 130);
+        doc.filaDosColumnas(nombre, 20, valor, 128);
+    });
+
+  }
+
+  function ponerActividadesFinal(activities, doc) {
+    if(activities.length==0)
+        return
+
+    doc.filaDosColumnasFinal("Fecha", 55, [ "Actividad"], 95, false);
+    doc.setFont('times', 'normal');
+    activities.forEach(item => {
+        const nombre = cortarEnT(item.fecha_actividad.toString());
+        const valor = item.descripcion; 
+        doc.filaDosColumnasFinal(nombre, 55, valor, 95);
     });
 
   }
@@ -134,43 +142,20 @@ function generarInformePDF(actividades, datos, observaciones) {
     doc.espacio()
     doc.espacio()
     doc.espacio()
+    doc.espacio()
+    doc.espacio()
+    doc.espacio()
+    doc.espacio()
+    doc.espacio()
     doc.centrarTexto('_________________________________________\n')
     doc.interlineado(1)
     doc.centrarTexto ( tutor.toUpperCase() )
     doc.interlineado(2)
     doc.centrarTexto('TUTOR TRABAJO TITULACIÓN');
-    doc.interlineado(4);
-    doc.espacio();
-    doc.espacio();
-    doc.interlineado(4);
-   
-    doc.setFontSize(16);
-    doc.setX(doc.leftMargin+9);
-    const ini=doc.yP;
-    doc.setY(doc.yP-1)
-    doc.setFont('times', 'bold');
-    doc.texto('.')
-    doc.setFontSize(10);
-    doc.setFont('times', 'normal');
-    doc.setY(ini)
-    doc.setX(doc.leftMargin+15)
-    doc.texto('INFORMES MENSUALES DE LOS AVANCES DEL TRABAJO DE '+
-        'TITULACIÓN EMITIDOS POR EL DOCENTE TUTOR (el Docente deberá'+
-        ' enviarlos por Quipux a la secretaria de la Unidad de Titulación'+
-        ' con copia al docente miembro de la Unidad de Titulación y por'+
-        ' correo al estudiante, debidamente firmados).');
-
-    doc.interlineado(4)
-    doc.setX(doc.leftMargin)
-    doc.texto('NOTA: Este informe deberá ser entregado por el docente tutor vía Quipux a la Ab. Daniela Montenegro, Secretaria de Consejo Directivo de Facultad, con copia al Docente responsable de la Unidad de Titulación de la Carrera y a la Ab. Elena Arcos, Secretaria de la Unidad de Titulación, y vía correo electrónico al estudiante.')
-    doc.interlineado(4)
-    doc.texto('En el informe de cumplimiento del 100% del tutor se deberán detallar las fechas de los avances mensuales, las cuales deberán corresponderse con las fechas insertas en cada informe mensual.')
-    doc.interlineado(4)
-    doc.texto('TODOS LOS INFORMES DEBERÁN CONTENER EL TEMA DE LA PROPUESTA APROBADO O MODIFICADO (SI ES EL CASO) CON RESOLUCIÓN DE CONSEJO DIRECTIVO DE FACULTAD, NO PODRÁN EXISTIR TEMAS DISTINTOS EN NINGUNA FASE NI DOCUMENTACIÓN DEL PROCESO.')
   }
 
   function cortarEnT(texto) {
-    // Busca la posición de la primera 't' en el string
+    texto=texto.toString();
     var posicionT = texto.indexOf('T');
     
     // Si encuentra 't', corta el string desde el inicio hasta la posición de 't'
@@ -182,4 +167,3 @@ function generarInformePDF(actividades, datos, observaciones) {
     }
 }
   module.exports = {generarInformePDF, generarInformePDFFinal}
-
