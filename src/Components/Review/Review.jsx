@@ -119,17 +119,18 @@ const Review = () => {
                 </thead>
                 <tbody>
                     {currentItems.map((report) => (
-                        <tr key={report.id}>  {/* Usar ID único como clave */}
+                        <tr key={report.id}>
                             <td>{report.nombre_informe}</td>
                             <td>{report.fecha_informe}</td>
                             <td>{report.porcentaje_avance}%</td>
-                            <td><Link to={`/review/${report.id}`} className='menu-item-btn' style={{ color: '#a52a2a'}}> {/* Suponiendo que quieras enlazar a una página de edición específica del informe */}
-                                <span className='menu-item'>Editar</span>
-                            </Link></td>
+                            <td>
+                                <Link to={`/edit-informe/${report.id}`} className='menu-item-btn' style={{ color: '#a52a2a'}}>
+                                    <span className='menu-item'>Editar</span>
+                                </Link>
+                            </td>
                         </tr>
                     ))}
-                </tbody>
-
+                             </tbody>
             </table>
 
             <div className="pagination">
