@@ -291,3 +291,7 @@
   display: flex;
   flex-wrap: wrap;
 }
+.espaciado-btn2{
+  margin-left: 89%;
+  margin-bottom: 5px;
+}

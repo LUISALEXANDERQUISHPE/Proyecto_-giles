@@ -441,24 +441,32 @@ app.get('/actividades/:idInforme', (req, res) => {
     const activitiesQuery = `
         SELECT 
             a.fecha_actividad,
-            a.descripcion
+            a.descripcion,
+            a.id_actividad
         FROM actividades a
         WHERE a.id_informe = ?
     `;
 
     // Descomenta las siguientes líneas para depurar la consulta y los parámetros
-    // console.log("Ejecutando consulta:", activitiesQuery);
-    // console.log("Con parámetros:", idInforme);
+    console.log("Ejecutando consulta:", activitiesQuery);
+    console.log("Con parámetros:", idInforme);
 
     db.query(activitiesQuery, [idInforme], (err, results) => {
         if (err) {
             console.error("Error al obtener actividades:", err);
             return res.status(500).send({ error: "Problemas técnicos al recuperar actividades." });
         }
-        console.log(results);
+        if (results.length === 0) {
+            console.log("No se encontraron actividades para el informe con ID:", idInforme);
+            return res.status(404).send({ error: "No se encontraron actividades." });
+        }
+        console.log("Actividades recuperadas desde la base de datos:", results);
         res.status(200).send(results);
     });
 });
+
+
+
 app.get('/tutor/:idEstudiante', (req, res) => {
     const idEstudiante = req.params.idEstudiante;
     const query = `
@@ -579,6 +587,76 @@ app.get('/informeFinal/:id_estudiante', async (req, res) => {
     });
 
 });
+/**--------nuevo aqui- */
+
+
+app.put('/editarActividad/:id', (req, res) => {
+    const idActividad = req.params.id;  // Este es el id_actividad
+    const { descripcion, fecha_actividad } = req.body;
+
+    // Imprimir los valores recibidos para depuración
+    console.log('ID de la actividad:', idActividad);
+    console.log('Descripción:', descripcion);
+    console.log('Fecha de actividad:', fecha_actividad);
+
+    // Validar que todos los campos requeridos están presentes
+    if (!descripcion || !fecha_actividad || !idActividad) {
+        return res.status(400).send({ error: "Todos los campos son obligatorios" });
+    }
+
+    const updateQuery = `
+        UPDATE actividades
+        SET descripcion = ?,
+            fecha_actividad = ?
+        WHERE id_actividad = ?
+    `;
+
+    db.query(updateQuery, [descripcion, fecha_actividad, idActividad], (err, results) => {
+        if (err) {
+            console.error("Error al actualizar la actividad:", err);
+            return res.status(500).send({ error: "Error al actualizar la actividad" });
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).send({ error: "Actividad no encontrada" });
+        }
+        res.status(200).send({ message: "Actividad actualizada correctamente" });
+    });
+});
+
+
+
+
+
+
+
+
+app.delete('/eliminarActividad/:id', (req, res) => {
+    const idActividad = req.params.id;
+
+    // Validar que el ID de la actividad es un número válido
+    if (isNaN(parseInt(idActividad, 10))) {
+        return res.status(400).send({ error: "El ID de la actividad debe ser un número válido" });
+    }
+
+    const deleteQuery = `
+        DELETE FROM actividades
+        WHERE id_actividad = ?
+    `;
+
+    db.query(deleteQuery, [idActividad], (err, results) => {
+        if (err) {
+            console.error("Error al eliminar actividad:", err);
+            return res.status(500).send({ error: "Error al eliminar actividad" });
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).send({ error: "Actividad no encontrada" });
+        }
+        res.status(200).send({ message: "Actividad eliminada correctamente" });
+    });
+});
+
+
+
     
 app.listen(5000, () => {
     console.log("Server is running on port 5000");

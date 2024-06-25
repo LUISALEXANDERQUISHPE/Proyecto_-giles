@@ -4,8 +4,14 @@
   import { useParams, useLocation } from 'react-router-dom';
   import { alertaCrearActividad } from './AlertActividad';
   import {exitoGuardarInforme } from './AlertActividad'; // Importar la función de alerta
+  import { FaBook, FaEdit, FaTrash } from 'react-icons/fa'; 
   import { Link } from 'react-router-dom';
+  import {alertaEditarActividad} from './AlertEditarActividad'; // Ajusta la ruta según sea necesario
+  import { errorActualizarPorcentaje } from './AlertActividad';
+  import {confirmarEliminarActividad} from './AlertEditarActividad';
+  import Swal from 'sweetalert2';
   let url;
+
 
 
   const CreateInforme = () => {
@@ -22,9 +28,14 @@
     const [itemsPerPage, setItemsPerPage] = useState(4); // Ajusta según tus necesidades
     const [showIframe, setShowIframe] = useState(false);
     const [URLPDF, setURLPDF] = useState(null);
+    const [porcentajeInicial, setPorcentajeInicial] = useState('');
+    const [actividadEnEdicion, setActividadEnEdicion] = useState(null);
+
+
     const lastIndex = currentPage * itemsPerPage;
     const firstIndex = lastIndex - itemsPerPage;
     const currentActividades = actividades.slice(firstIndex, lastIndex);
+    
     
 
 
@@ -65,6 +76,7 @@
             }
             const data = await respuesta.json();
             setPorcentajeAvance(data.totalPorcentaje);
+            setPorcentajeInicial(data.totalPorcentaje);
           } catch (error) {
             console.error('Error al obtener el porcentaje de la tesis:', error);
           }
@@ -77,10 +89,23 @@
     const handleGuardarInformeClick = async () => {
       // Verifica que los campos requeridos estén llenos
       if (!tituloInforme || !fechaInforme) {
-        alert('Error: Falta ingresar algunos campos requeridos. Por favor, asegúrate de llenar el título del informe y la fecha del informe antes de guardar.');
-        return; // Sale de la función si la validación falla
+        errorActualizarPorcentaje('Error: Falta ingresar algunos campos requeridos.');
+        return;
       }
     
+      if (porcentajeAvance === porcentajeInicial) {
+        errorActualizarPorcentaje('Debe actualizar el porcentaje de avance');
+        return;
+      }
+      if (actividades.length === 0) {
+        errorActualizarPorcentaje('Debe agregar al menos una actividad antes de guardar el informe.');
+        return;
+      }
+       // Verifica que el porcentaje de avance haya sido actualizado y sea mayor que el inicial
+      if (parseInt(porcentajeAvance) <= parseInt(porcentajeInicial)) {
+        errorActualizarPorcentaje(`El porcentaje de avance debe ser mayor al valor inicial.  Anterior:${porcentajeInicial}`);
+        return;
+      }
       try {
         const respuesta = await fetch("/updateInforme", {
           method: "PUT",
@@ -213,15 +238,6 @@
 };
 
 
-
-
-  // Llamada inicial para cargar actividades
-  useEffect(() => {
-    if (informeId) {
-      fetchActividades();
-    }
-  }, [informeId, fetchActividades]); 
-
     const handlePorcentajeChange = (e) => {
       const value = e.target.value;
       if (value === '' || (/^\d+$/.test(value) && value >= 0 && value <= 100)) {
@@ -250,6 +266,84 @@
         console.error('Error al generar el informe PDF:', error);
     });
     };
+
+    const handleEditarActividad = async (id_actividad) => {
+      console.log("Editando actividad con ID:", id_actividad);
+  
+      // Supongamos que actividades es un array con todas las actividades
+      const actividadEditar = actividades.find(act => act.id_actividad === id_actividad);
+  
+      if (!actividadEditar) {
+          alert('Actividad no encontrada');
+          return;
+      }
+  
+      // Mostrar el popup alertaEditarActividad con los datos de la actividad a editar
+      alertaEditarActividad({
+          id_actividad: actividadEditar.id_actividad,
+          descripcion: actividadEditar.descripcion,
+          fecha_actividad: actividadEditar.fecha_actividad,
+      }, fetchActividades);
+  
+      // Establecer el estado de actividadEnEdicion con la actividad actual
+      setActividadEnEdicion(actividadEditar);
+  };
+  
+  
+  
+    
+    
+  
+  
+  const handleEliminarActividad = async (actividadId) => {
+    Swal.fire({
+      title: "¿Estás seguro de que quieres eliminar esta actividad?",
+      text: "Esta acción no se puede deshacer. ¿Estás seguro de proceder?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar"
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await fetch(`/eliminarActividad/${actividadId}`, {
+            method: 'DELETE',
+          });
+  
+          if (!response.ok) {
+            throw new Error('Failed to delete activity');
+          }
+  
+          console.log('Actividad eliminada exitosamente');
+          fetchActividades(); // Actualiza la lista de actividades después de la eliminación
+  
+          // Mostrar mensaje de éxito
+          Swal.fire({
+            title: "¡Actividad eliminada!",
+            text: "La actividad ha sido eliminada exitosamente.",
+            icon: "success",
+            confirmButtonColor: "#3085d6",
+            confirmButtonText: "Aceptar"
+          });
+  
+        } catch (error) {
+          console.error('Error al eliminar la actividad:', error);
+          // Mostrar mensaje de error
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Ocurrió un error al eliminar la actividad. Por favor, inténtalo de nuevo más tarde.',
+            confirmButtonColor: "#3085d6",
+            confirmButtonText: "Aceptar"
+          });
+        }
+      }
+    });
+  };
+
+
 
 
     return (
@@ -303,30 +397,45 @@
              </div>
             </div>
             <div className="activities">
-              <h4>Actividades</h4>
+              <div>
+                <h3 className='title-informes'>Actividades</h3>
+                <button className="Btn espaciado-btn2" onClick={handleCrearActividad}>Añadir
+                    <svg className="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                    <path d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM112 256H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16z" />
+                    </svg>
+                </button>
+            </div>
               <table>
                 <thead>
                     <tr>
                         <th>Fecha de actividad</th>
                         <th>Descripción</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {currentActividades.length >= 0 ? currentActividades.map((actividad, index) => (
-                        <tr key={index}>
-                            <td>{new Date(actividad.fecha_actividad).toISOString().split('T')[0]}</td>
-                            <td>{actividad.descripcion}</td>
-                            <td>{actividad.id}</td>
-                            <td>
-                           hola
-                            </td>
-                        </tr>
-                    )) : (
-                        <tr>
-                            <td colSpan="2">No hay actividades registradas</td>
-                        </tr>
-                    )}
+                  {currentActividades.length > 0 ? currentActividades.map((actividad) => (
+                      <tr key={actividad.id_actividad}>  {/* Cambiado de index a actividad.id */}
+                          <td>{new Date(actividad.fecha_actividad).toISOString().split('T')[0]}</td>
+                          <td>{actividad.descripcion}</td>
+                          <td>
+                          <div className="contenedor-acciones">
+                            <span className="action-icon-edit" onClick={() => handleEditarActividad(actividad.id_actividad)}>
+                              <FaEdit />
+                            </span>
+                            <span className="action-icon-eliminar" onClick={() => handleEliminarActividad(actividad.id_actividad)}>
+                              <FaTrash />
+                            </span>
+                          </div>
+                          </td>
+                      </tr>
+                  )) : (
+                      <tr>
+                          <td colSpan="3">No hay actividades registradas</td>
+                      </tr>
+                  )}
                 </tbody>
+
             </table>
 
             <div className="pagination">
@@ -337,12 +446,13 @@
 
             <br />
               <div className="buttons">
-                <button onClick={handleCrearActividad}>
-                  Agregar actividades
+              {porcentajeAvance === 100 || parseInt(porcentajeInicial) === 100 ? (
+                <button onClick={handleInformeFinal}>
+                  Generar informe final
                 </button>
-                <button onClick={handleInformeFinal}>Generar informe final</button>
-                <button onClick={handleGuardarInformeClick} disabled={!tituloInforme || !fechaInforme}>
-                Guardar Anexo
+              ) : null}
+                <button onClick={handleGuardarInformeClick} >
+                Guardar Informe
                 </button>
                 <button id="botonPDF"  onClick={handleVisualizarInformeClick}>
                 Generar PDF
@@ -353,17 +463,16 @@
 
         </div>
       
-      <div className='pdf'>
-        <div id="pdfC" className={showIframe? "pdf-container":"hiden"}>
-          <iframe
-            id="pdf"
-            className="pdf-iframe"
-            src={url}
-          ></iframe>
-           <button className="close-button"  onClick={handleCerrarInformeClick}>X</button>
+          <div className='pdf'>
+            <div id="pdfC" className={showIframe? "pdf-container":"hiden"}>
+              <iframe
+                id="pdf"
+                className="pdf-iframe"
+                src={url}
+              ></iframe>
+              <button className="close-button"  onClick={handleCerrarInformeClick}>X</button>
+              </div>
           </div>
-      </div>
-   
         </div>
       </div>
     );

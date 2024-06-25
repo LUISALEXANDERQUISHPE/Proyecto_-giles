@@ -95,3 +95,15 @@ export const exitoGuardarInforme = (mensaje) => {
         allowOutsideClick: false
     });
 };
+export const errorActualizarPorcentaje = (mensaje) => {
+    Swal.fire({
+        title: mensaje,
+        icon: 'error',  // Cambia el ícono a 'error'
+        background: '#fff',
+        showConfirmButton: false,
+        backdrop: true,
+        timer: 2500,
+        timerProgressBar: true,
+        allowOutsideClick: false
+    });
+};
