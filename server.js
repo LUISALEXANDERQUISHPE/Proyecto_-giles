@@ -455,6 +455,7 @@ app.get('/actividades/:idInforme', (req, res) => {
             console.error("Error al obtener actividades:", err);
             return res.status(500).send({ error: "Problemas técnicos al recuperar actividades." });
         }
+        console.log(results);
         res.status(200).send(results);
     });
 });

@@ -1,18 +1,20 @@
   import React, { useState, useEffect, useCallback } from 'react';
   import images from '../Assets/img/images';
   import './CreateInforme.css';
+  import useDebouncedResizeObserver from './hook';
   import { useParams, useLocation } from 'react-router-dom';
   import { alertaCrearActividad } from './AlertActividad';
   import {exitoGuardarInforme } from './AlertActividad'; // Importar la función de alerta
-  import imagen from "./PDF_icon.svg"
   let url;
+
+
   const CreateInforme = () => {
     const { id } = useParams(); // Obtener el ID del estudiante desde la URL
     const [studentData, setStudentData] = useState(null);
     const [porcentajeAvance, setPorcentajeAvance] = useState('');
     const [tituloInforme, setTituloInforme] = useState('');
     const [fechaInforme, setFechaInforme] = useState('');
-    const [inputsEnabled, setInputsEnabled] = useState(false); // Estado para habilitar/deshabilitar inputs
+   const [inputsEnabled, setInputsEnabled] = useState(false); // Estado para habilitar/deshabilitar inputs
     const [idTesis, setIdTesis] = useState(''); // Estado para almacenar el id de la tesis
     const [informeId, setInformeId] = useState(null);
     const [actividades, setActividades] = useState([]);
@@ -216,10 +218,9 @@
   // Llamada inicial para cargar actividades
   useEffect(() => {
     if (informeId) {
-        fetchActividades();
+      fetchActividades();
     }
-}, [informeId]); // Reactivará la carga de actividades cada vez que informeId cambie
-
+  }, [informeId, fetchActividades]); 
 
     const handlePorcentajeChange = (e) => {
       const value = e.target.value;
@@ -249,9 +250,12 @@
         console.error('Error al generar el informe PDF:', error);
     });
     };
+    useDebouncedResizeObserver(() => {
+      console.log('Resized');
+    });
 
     return (
-      <div className="profile-container">
+      <div className="profile-container"  id="observedElement">
         <div className='container-Header'>
           <div className='subtitle'>
             <h4>Estudiantes Crear-Informe</h4>
@@ -261,7 +265,7 @@
           </div>
         </div>
         <div id ="contenido" style={{display: showIframe ? 'flex' : 'block'}}>
-        <div id="left" className="centra-content" style={{ width: showIframe ? '40%' : '100%' }}>
+        <div id="left" className="centra-content" style={{ width: showIframe ? '55%' : '100%' }}>
           <div className="left-section">
             <div className="student-info">
               <p><strong>Estudiante:</strong> <span>{studentData ? `${studentData.nombres} ${studentData.apellidos}` : 'Cargando...'}</span></p>
@@ -298,14 +302,8 @@
                 />
               </p>
               </div>
-              <div id="botonPDF" className={showIframe ? 'hiden':'column right-column'} onClick={handleVisualizarInformeClick}>
-                <img className="imagenPDF" src={imagen}  />
-                <p>Visualizar PDF</p>
-              </div>
-              </div>
-             
+             </div>
             </div>
-
             <div className="activities">
               <h4>Actividades</h4>
               <table>
@@ -316,10 +314,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {currentActividades.length > 0 ? currentActividades.map((actividad, index) => (
+                    {currentActividades.length >= 0 ? currentActividades.map((actividad, index) => (
                         <tr key={index}>
                             <td>{new Date(actividad.fecha_actividad).toISOString().split('T')[0]}</td>
                             <td>{actividad.descripcion}</td>
+                            <td>{actividad.id}</td>
+                            <td>
+                          
+                            </td>
                         </tr>
                     )) : (
                         <tr>
@@ -340,19 +342,20 @@
                 <button onClick={handleCrearActividad}>
                   Agregar actividades
                 </button>
-                <button>Modificar</button>
-                <button>Eliminar</button>
-                <button onClick={handleInformeFinal}>Crear informe final</button>
+                <button onClick={handleInformeFinal}>Generar informe final</button>
                 <button onClick={handleGuardarInformeClick} disabled={!tituloInforme || !fechaInforme}>
                 Guardar Anexo
-            </button>
+                </button>
+                <button id="botonPDF"  onClick={handleVisualizarInformeClick}>
+                Generar PDF
+                </button>
               </div>
             </div>
           </div>
 
         </div>
       
-      
+      <div className='pdf'>
         <div id="pdfC" className={showIframe? "pdf-container":"hiden"}>
           <iframe
             id="pdf"
@@ -360,8 +363,8 @@
             src={url}
           ></iframe>
            <button className="close-button"  onClick={handleCerrarInformeClick}>X</button>
-        </div>
-      
+          </div>
+      </div>
    
         </div>
       </div>
