@@ -1,4 +1,5 @@
 /* AlertStyles.css */
+iframe#webpack-dev-server-client-overlay{display:none!important}
 .custom-swal-popup {
     width: 400px !important; /* Ajusta el tamaño de la alerta */
     height: auto !important;

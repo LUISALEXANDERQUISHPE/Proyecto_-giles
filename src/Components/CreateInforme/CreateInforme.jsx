@@ -9,6 +9,7 @@
   import {alertaEditarActividad} from './AlertEditarActividad'; // Ajusta la ruta según sea necesario
   import { errorActualizarPorcentaje } from './AlertActividad';
   import {confirmarEliminarActividad} from './AlertEditarActividad';
+  import { useNavigate } from 'react-router-dom';
   import Swal from 'sweetalert2';
   let url;
 
@@ -30,6 +31,7 @@
     const [URLPDF, setURLPDF] = useState(null);
     const [porcentajeInicial, setPorcentajeInicial] = useState('');
     const [actividadEnEdicion, setActividadEnEdicion] = useState(null);
+    const navigate = useNavigate();
 
 
     const lastIndex = currentPage * itemsPerPage;
@@ -128,6 +130,7 @@
         const data = await respuesta.json();
         console.log('Success:', data.message);
         exitoGuardarInforme('Anexo guardado');
+        navigate('/review');
         //alert('Informe guardado correctamente!');
       } catch (error) {
         console.error('Error:', error);
