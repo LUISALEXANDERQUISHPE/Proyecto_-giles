@@ -9,6 +9,7 @@ import RegEstudent from './Components/RegEstudent/RegistroEstudent';
 import Students from './Components/Students/Student';
 import Review from './Components/Review/Review';
 import CreateInforme from './Components/CreateInforme/CreateInforme'; // Importa el componente de CreateInforme
+import EditInforme from './Components/EditInforme/EditInforme';
 
 function App() {
     useEffect(() => {
@@ -31,6 +32,8 @@ function App() {
                     <Route path="/student" element={<Students />} />
                     <Route path="/review/:id" element={<Review />} />
                     <Route path="/create-informe/:id" element={<CreateInforme />} /> {/* Nueva ruta para CreateInforme */}
+                    <Route path="/edit-informe/:id" element={<EditInforme />} /> {/* Nueva ruta para EditInforme */}
+
                 </Route>
             </Routes>
         </Router>
