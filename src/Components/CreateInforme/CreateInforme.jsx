@@ -1,10 +1,10 @@
   import React, { useState, useEffect, useCallback } from 'react';
   import images from '../Assets/img/images';
   import './CreateInforme.css';
-  import useDebouncedResizeObserver from './hook';
   import { useParams, useLocation } from 'react-router-dom';
   import { alertaCrearActividad } from './AlertActividad';
   import {exitoGuardarInforme } from './AlertActividad'; // Importar la función de alerta
+  import { Link } from 'react-router-dom';
   let url;
 
 
@@ -250,12 +250,10 @@
         console.error('Error al generar el informe PDF:', error);
     });
     };
-    useDebouncedResizeObserver(() => {
-      console.log('Resized');
-    });
+
 
     return (
-      <div className="profile-container"  id="observedElement">
+      <div className="profile-container"  >
         <div className='container-Header'>
           <div className='subtitle'>
             <h4>Estudiantes Crear-Informe</h4>
@@ -320,7 +318,7 @@
                             <td>{actividad.descripcion}</td>
                             <td>{actividad.id}</td>
                             <td>
-                          
+                           hola
                             </td>
                         </tr>
                     )) : (
