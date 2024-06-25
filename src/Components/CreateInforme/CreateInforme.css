@@ -289,3 +289,53 @@
   width: 100%;
   height: 100%;
 }
+
+
+.input-icon-folder {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 600px; /* Ajusta el espacio entre el input y el ícono */
+  cursor: pointer;
+  font-size: 1.5em; /* Ajusta el tamaño del ícono según sea necesario */
+}
+.input-icon-folder {
+  cursor: pointer; /* Cambia el cursor al pasar por encima */
+}
+
+.icono-libreta {
+  transition: transform 0.3s ease-out; /* Transición suave del ícono */
+}
+
+.icono-libreta:hover {
+  transform: scale(1.2); /* Aumenta el tamaño del ícono al pasar el ratón por encima */
+}
+.action-icon-edit,
+.action-icon-eliminar {
+    cursor: pointer; /* Cambia el cursor al pasar por encima */
+    margin-right: 10px; /* Espacio entre los íconos */
+}
+
+.action-icon-edit:hover,
+.action-icon-eliminar:hover {
+    color: #007bff; /* Cambia el color al pasar el ratón por encima */
+}
+
+
+.input-field-porcentaje-avance {
+  display: inline-block;
+  width: auto; /* Ajusta el ancho según sea necesario */
+  vertical-align: middle; /* Alinea verticalmente con el ícono */
+  padding: 8px; /* Añade un poco de relleno al input */
+  margin-right: 95px; /* Ajusta el margen derecho para separación visual */
+}
+.action-icon-edit,
+.action-icon-eliminar {
+  cursor: pointer;
+  margin-right: 8px; /* Ajusta el espacio entre los íconos según tus preferencias */
+}
+
+.action-icon-edit svg,
+.action-icon-eliminar svg {
+  vertical-align: middle; /* Asegura que los íconos estén alineados verticalmente */
+}
+
