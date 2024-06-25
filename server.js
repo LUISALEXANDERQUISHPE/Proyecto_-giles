@@ -657,6 +657,79 @@ app.delete('/eliminarActividad/:id', (req, res) => {
 
 
 
+
+
+
+
+
+app.get('/datosGenerales/:idEstudiante', (req, res) => {
+    const idEstudiante = req.params.idEstudiante;
+
+    if (!idEstudiante || isNaN(idEstudiante)) {
+        return res.status(400).send({ error: "ID de estudiante no válido" });
+    }
+
+    const query = `
+        SELECT 
+            CONCAT(e.nombres, ' ', e.apellidos) AS nombre_estudiante,
+            e.cedula,
+            e.fecha_nacimiento,
+            e.lugar_nacimiento,
+            e.direccion,
+            e.telefono,
+            e.correo_electronico,
+            c.nombre_carrera,
+            ee.nombre_estado,
+            t.tema AS tema_tesis,
+            t.fecha_aprobacion,
+            CONCAT(tu.nombres, ' ', tu.apellidos) AS nombre_tutor,
+            te.nombre_tesis AS nombre_informe,
+            te.fecha_informe,
+            te.porcentaje_avance
+        FROM estudiantes e
+        JOIN carreras c ON e.id_carrera = c.id_Carreras
+        JOIN estados_estudiantes ee ON e.id_estado_estudiante = ee.id_estados_estudiantes
+        JOIN tesis t ON e.id_estudiante = t.id_estudiante
+        JOIN tutores tu ON e.id_tutor = tu.id_tutores
+        JOIN informes te ON t.id_tesis = te.id_tesis
+        WHERE e.id_estudiante = ?
+    `;
+
+    db.query(query, [idEstudiante], (err, results) => {
+        if (err) {
+            console.error("Error al obtener los datos generales:", err);
+            return res.status(500).send({ error: "Error al recuperar los datos generales del estudiante" });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).send({ error: "No se encontraron datos para el estudiante con el ID proporcionado" });
+        }
+
+        // Formatear la fecha de nacimiento y fecha de aprobación en formato DD-MM-YYYY
+        results.forEach(result => {
+            if (result.fecha_nacimiento) {
+                result.fecha_nacimiento = new Date(result.fecha_nacimiento).toLocaleDateString('es-ES');
+            }
+            if (result.fecha_aprobacion) {
+                result.fecha_aprobacion = new Date(result.fecha_aprobacion).toLocaleDateString('es-ES');
+            }
+            if (result.fecha_informe) {
+                result.fecha_informe = new Date(result.fecha_informe).toLocaleDateString('es-ES');
+            }
+        });
+
+        const data = results[0]; // Tomamos el primer resultado porque debería ser único por ID de estudiante
+
+        // Capitalizar nombres y apellidos
+        data.nombre_estudiante = capitalizeFirstLetter(data.nombre_estudiante);
+        data.nombre_tutor = capitalizeFirstLetter(data.nombre_tutor);
+        data.tema_tesis = capitalizeFirstLetter(data.tema_tesis);
+        data.nombre_informe = capitalizeFirstLetter(data.nombre_informe);
+
+        res.status(200).send(data);
+    });
+});
+
     
 app.listen(5000, () => {
     console.log("Server is running on port 5000");
