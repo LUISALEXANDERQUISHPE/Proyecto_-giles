@@ -579,6 +579,67 @@ app.get('/informeFinal/:id_estudiante', async (req, res) => {
 
 });
     
+
+app.put('/editarActividad/:id', (req, res) => {
+    const idActividad = req.params.id;
+    const { descripcion, fecha_actividad } = req.body;
+
+    // Validar que todos los campos requeridos están presentes
+    if (!descripcion || !fecha_actividad) {
+        return res.status(400).send({ error: "Todos los campos son obligatorios" });
+    }
+
+    const updateQuery = `
+        UPDATE actividades
+        SET descripcion = ?,
+            fecha_actividad = ?
+        WHERE id = ?
+    `;
+
+    db.query(updateQuery, [descripcion, fecha_actividad, idActividad], (err, results) => {
+        if (err) {
+            console.error("Error al actualizar la actividad:", err);
+            return res.status(500).send({ error: "Error al actualizar la actividad" });
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).send({ error: "Actividad no encontrada" });
+        }
+        res.status(200).send({ message: "Actividad actualizada correctamente" });
+    });
+});
+
+
+
+app.delete('/eliminarActividad/:id', (req, res) => {
+    const idActividad = req.params.id;
+
+    // Validar que el ID de la actividad es un número válido
+    if (isNaN(parseInt(idActividad, 10))) {
+        return res.status(400).send({ error: "El ID de la actividad debe ser un número válido" });
+    }
+
+    const deleteQuery = `
+        DELETE FROM actividades
+        WHERE id = ?
+    `;
+
+    db.query(deleteQuery, [idActividad], (err, results) => {
+        if (err) {
+            console.error("Error al eliminar actividad:", err);
+            return res.status(500).send({ error: "Error al eliminar actividad" });
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).send({ error: "Actividad no encontrada" });
+        }
+        res.status(200).send({ message: "Actividad eliminada correctamente" });
+    });
+});
+
+
+
+
+
+
 app.listen(5000, () => {
     console.log("Server is running on port 5000");
 });
