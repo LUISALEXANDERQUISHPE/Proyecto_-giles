@@ -1,0 +1,31 @@
+/* AlertStyles.css */
+.custom-swal-popup {
+    width: 400px !important; /* Ajusta el tamaño de la alerta */
+    height: auto !important;
+}
+
+.custom-swal-input {
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+    padding: 10px;
+    width: 83%;
+    font-size: 16px;
+}
+
+.custom-swal-button {
+    background-color: #6c63ff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.custom-swal-button:hover {
+    background-color: #5a54d1;
+}
+
+.custom-swal-input::placeholder {
+    color: #a9a9a9;
+}

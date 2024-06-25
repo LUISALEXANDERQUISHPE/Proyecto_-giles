@@ -1,0 +1,172 @@
+
+.profile-header {
+    justify-content: center;
+    align-items: center;
+    height: 80px;
+    text-align: left;
+}
+.subtitle {
+flex-grow: 1;
+flex-basis: 200;
+color: #fff;
+font-size: 25px;
+letter-spacing: 1.3px;
+text-align:left ;
+}
+.container-Header {
+font-family: 'Liberation Serif', serif;
+display: flex;
+width: 100%;
+height: 75px;
+background: #7C121F;
+margin: auto;
+box-shadow: 0px 10px 0px 0px #420205;
+}
+.profile-container {
+    background: #fff;
+flex-direction: column;
+width: 100%;
+height: 100%;
+}
+
+________________________________-
+
+.flexi{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 50%;
+
+}
+
+.espaciado{
+    margin: auto;
+    margin-top: 10px;
+    margin-left: 15%;
+    margin-bottom: 10px;
+}
+
+.position-Review {
+    display: flex;
+    flex: 1;
+  }
+
+.Carrera{
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: 600;
+    font-size: 21px;
+    margin-left: 23%;
+    
+}
+.Nombre{
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: 600;
+    font-size: 21px;
+    margin-left: 18%;
+}
+.tema{
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: 600;
+    font-size: 21px;
+    margin-left: 26%;
+}
+.largos{
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: 600;
+    font-size: 21px;
+    margin-left: 3%;
+}
+.largos2{
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: 600;
+    font-size: 21px;
+    margin-left: 14%;
+}
+
+.info-item {
+    padding: 3px;
+    padding-top: 7px; /* Ajusta el padding para dar más espacio alrededor de los elementos */
+    width: 50%; /* Controla el ancho del contenedor */
+    margin: auto; /* Centra el contenedor en la página */
+}
+label{
+    font-size: 18px;
+    letter-spacing:1.3px ;
+    font-weight: 400;
+    font-family: 'Times New Roman', Times, serif;
+}
+.table{
+   
+    margin-right: 20%;
+    border: 2px solid #333;
+}
+.pagination {
+    margin-top: 20px; /* Agregar espacio entre la tabla y los botones de paginación */
+    text-align: center;
+  }
+  .styled-table {
+    width: 80%; /* Reduce width for better spacing */
+    border-collapse: collapse;
+    margin: 0 auto; /* Center table */
+    background-color: #f2f2f2; /* Table background */
+    margin-bottom: 40px;
+  }
+.menu__link{
+    text-decoration: none;
+}
+
+.Btn {
+    margin-left: 20px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100px;
+    height: 24px;
+    border: none;
+    padding: 0px 20px;
+    background-color: #7C121F;
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 10px;
+    box-shadow: 3px 3px 0px #420205;
+    transition-duration: .3s;
+  }
+  
+  .svg {
+    width: 13px;
+    position: absolute;
+    right: 0;
+    margin-right: 10px;
+    fill: white;
+    transition-duration: .3s;
+  }
+  
+  .Btn:hover {
+    color: transparent;
+  }
+  
+  .Btn:hover svg {
+    right: 43%;
+    margin: 0;
+    padding: 0;
+    border: none;
+    transition-duration: .3s;
+  }
+  
+  .Btn:active {
+    transform: translate(3px , 3px);
+    transition-duration: .3s;
+    box-shadow: 2px 2px 0px #fff;
+  }
+.espaciado-btn{
+    margin-left: 82%;
+    margin-bottom: 5px;
+}
+.title-informes{
+  font-family: 'Times New Roman', Times, serif;
+  font-weight: bold;
+  font-size: 29px;
+  margin-top: 30px;
+}

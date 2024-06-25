@@ -1,0 +1,94 @@
+.profile-container {
+  font-family: Arial, sans-serif;
+  text-align: center; /* Center content */
+}
+
+.container-Header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  background-color: #800000; /* UTA color */
+  padding: 10px;
+}
+
+.subtitle h4 {
+  margin: 0;
+  color: white; /* Change text color to white */
+}
+
+.profile-logo {
+  height: 50px;
+}
+
+
+.filter-section {
+  display: flex;
+  justify-content: center; /* Center filters */
+  margin-bottom: 50px;
+  margin-top: 50px;
+  gap: 30px; /* Space between filters */
+}
+
+.filter-section label {
+  display: flex;
+  flex-direction: column;
+  margin-right: 10px;
+}
+
+.filter-section input,
+.filter-section select {
+  padding: 8px;
+  width: 200px; /* Set a uniform width */
+  margin-top: 5px;
+}
+
+.styled-table {
+  width: 80%; /* Reduce width for better spacing */
+  border-collapse: collapse;
+  margin: 0 auto; /* Center table */
+  background-color: #f2f2f2; /* Table background */
+  margin-bottom: 40px;
+}
+
+.styled-table th, .styled-table td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.styled-table th {
+  background-color: #800000; /* UTA color */
+  color: white; /* Text color */
+  font-weight: bold;
+}
+
+.styled-table a {
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+}
+/* Estilos para los botones de paginación */
+.pagination {
+  margin-top: 20px; /* Agregar espacio entre la tabla y los botones de paginación */
+  text-align: center;
+}
+
+.pagination button {
+  background-color: #800000; /* UTA color */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin: 0 5px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.pagination button:hover {
+  background-color: #a52a2a; /* Cambiar el color al pasar el ratón sobre el botón */
+}
+
+.pagination span {
+  margin: 0 10px;
+}
